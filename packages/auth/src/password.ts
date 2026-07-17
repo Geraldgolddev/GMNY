@@ -1,17 +1,51 @@
-import bcrypt from 'bcryptjs';
+import { hash, verify, type Options } from '@node-rs/argon2';
 import { MIN_PASSWORD_LENGTH } from '@nairaflow/shared';
 
-/** Hash a plaintext password using bcrypt with the configured cost factor. */
-export async function hashPassword(plain: string, saltRounds = 12): Promise<string> {
+export interface Argon2Params {
+  /** Memory cost in KiB. */
+  memoryCost?: number;
+  /** Iterations. */
+  timeCost?: number;
+  /** Degree of parallelism. */
+  parallelism?: number;
+}
+
+/**
+ * OWASP-aligned Argon2id defaults (19 MiB, t=2, p=1). Tunable via env in the
+ * API layer for stronger production settings.
+ */
+const DEFAULT_PARAMS: Required<Argon2Params> = {
+  memoryCost: 19_456,
+  timeCost: 2,
+  parallelism: 1,
+};
+
+function toOptions(params?: Argon2Params): Options {
+  return {
+    // algorithm 2 === Argon2id in @node-rs/argon2
+    algorithm: 2,
+    memoryCost: params?.memoryCost ?? DEFAULT_PARAMS.memoryCost,
+    timeCost: params?.timeCost ?? DEFAULT_PARAMS.timeCost,
+    parallelism: params?.parallelism ?? DEFAULT_PARAMS.parallelism,
+  };
+}
+
+/** Hash a plaintext password with Argon2id. */
+export async function hashPassword(plain: string, params?: Argon2Params): Promise<string> {
   if (plain.length < MIN_PASSWORD_LENGTH) {
     throw new Error(`Password must be at least ${MIN_PASSWORD_LENGTH} characters`);
   }
-  return bcrypt.hash(plain, saltRounds);
+  return hash(plain, toOptions(params));
 }
 
-/** Constant-time verification of a plaintext password against a bcrypt hash. */
-export async function verifyPassword(plain: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(plain, hash);
+/** Constant-time verification of a plaintext password against an Argon2 hash. */
+export async function verifyPassword(plain: string, hashed: string): Promise<boolean> {
+  try {
+    return await verify(hashed, plain);
+  } catch {
+    // Malformed hash / mismatch -> treat as failed verification.
+    return false;
+  }
 }
 
 /**

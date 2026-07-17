@@ -4,6 +4,7 @@ import {
   verifyRefreshToken,
   hashToken,
   signAccessToken,
+  generateSecureToken,
 } from './tokens';
 import { UserRole } from '@nairaflow/shared';
 
@@ -55,5 +56,21 @@ describe('token issuance & verification', () => {
       config,
     );
     expect(verifyAccessToken(token, config).role).toBe(UserRole.ADMIN);
+  });
+});
+
+describe('generateSecureToken', () => {
+  it('produces unique, URL-safe, high-entropy tokens', () => {
+    const a = generateSecureToken();
+    const b = generateSecureToken();
+    expect(a).not.toBe(b);
+    expect(a).toMatch(/^[A-Za-z0-9_-]+$/);
+    expect(a.length).toBeGreaterThanOrEqual(40);
+  });
+
+  it('stores only a stable hash, never the raw token', () => {
+    const raw = generateSecureToken();
+    expect(hashToken(raw)).toBe(hashToken(raw));
+    expect(hashToken(raw)).not.toBe(raw);
   });
 });

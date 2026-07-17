@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import jwt, { type SignOptions, type VerifyOptions } from 'jsonwebtoken';
 import type { JwtAccessPayload, JwtRefreshPayload, UserRole } from '@nairaflow/shared';
 
@@ -102,4 +102,13 @@ export function verifyRefreshToken(token: string, config: TokenConfig): JwtRefre
  */
 export function hashToken(token: string): string {
   return createHash('sha256').update(token).digest('hex');
+}
+
+/**
+ * Generate a high-entropy, URL-safe opaque token (for email verification and
+ * password reset links). Returns the raw token — persist only its
+ * {@link hashToken} digest.
+ */
+export function generateSecureToken(bytes = 32): string {
+  return randomBytes(bytes).toString('base64url');
 }

@@ -23,11 +23,10 @@
   },
   "dependencies": {
     "@nairaflow/shared": "workspace:*",
-    "bcryptjs": "^2.4.3",
+    "@node-rs/argon2": "^2.0.2",
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.10.5",
