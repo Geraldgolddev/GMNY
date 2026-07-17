@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AuditAction } from '@nairaflow/shared';
+import { AuditAction } from '@gmny/shared';
 import { PrismaService } from '../../prisma/prisma.service';
 
 export interface AuditContext {
@@ -11,7 +11,7 @@ export interface RecordAuditInput {
   action: AuditAction;
   entityType: string;
   entityId?: string;
-  actorId?: string;
+  userId?: string;
   metadata?: Record<string, unknown>;
   context?: AuditContext;
 }
@@ -33,7 +33,7 @@ export class AuditService {
           action: input.action,
           entityType: input.entityType,
           entityId: input.entityId,
-          actorId: input.actorId,
+          userId: input.userId,
           metadata: input.metadata as object | undefined,
           ipAddress: input.context?.ipAddress,
           userAgent: input.context?.userAgent,

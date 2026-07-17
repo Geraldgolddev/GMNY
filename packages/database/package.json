@@ -1,8 +1,8 @@
 {
-  "name": "@nairaflow/database",
+  "name": "@gmny/database",
   "version": "0.1.0",
   "private": true,
-  "description": "Prisma schema, generated client, and migrations for NairaFlow.",
+  "description": "Prisma schema, generated client, and migrations for GMNY.",
   "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -34,7 +34,7 @@
     "@prisma/client": "^6.2.1"
   },
   "devDependencies": {
-    "@nairaflow/shared": "workspace:*",
+    "@gmny/shared": "workspace:*",
     "@node-rs/argon2": "^2.0.2",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.5",

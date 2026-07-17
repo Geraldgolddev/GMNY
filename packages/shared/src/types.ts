@@ -1,6 +1,6 @@
 import { UserRole } from './enums';
 
-/** JWT access-token payload shape (kept in sync with @nairaflow/auth). */
+/** JWT access-token payload shape (kept in sync with @gmny/auth). */
 export interface JwtAccessPayload {
   /** Subject — the user id. */
   sub: string;

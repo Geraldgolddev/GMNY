@@ -30,7 +30,7 @@ export interface DomainErrorOptions {
   cause?: unknown;
 }
 
-/** Base class for all NairaFlow domain errors. */
+/** Base class for all GMNY domain errors. */
 export class DomainError extends Error {
   public readonly code: DomainErrorCode;
   public readonly httpStatus: number;
