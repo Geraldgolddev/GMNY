@@ -1,1 +1,1 @@
-# NairaFlow
+# GMNY
