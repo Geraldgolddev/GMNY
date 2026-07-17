@@ -1,0 +1,91 @@
+# ─────────────────────────────────────────────────────────────
+# NairaFlow local orchestration.
+#
+#   docker compose up -d postgres redis     # infra only (recommended for dev)
+#   docker compose --profile apps up --build # full stack (api + web + admin)
+# ─────────────────────────────────────────────────────────────
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nairaflow-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nairaflow
+      POSTGRES_PASSWORD: nairaflow
+      POSTGRES_DB: nairaflow
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U nairaflow']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: nairaflow-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: nairaflow-api
+    profiles: ['apps']
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://nairaflow:nairaflow@postgres:5432/nairaflow?schema=public
+      REDIS_URL: redis://redis:6379
+      API_PORT: 4000
+      API_GLOBAL_PREFIX: api
+      API_CORS_ORIGINS: http://localhost:3000,http://localhost:3001
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me-000000000000000000000000000000}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-refresh-secret-change-me-11111111111111111111111111111111}
+    ports:
+      - '4000:4000'
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: nairaflow-web
+    profiles: ['apps']
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api
+    ports:
+      - '3000:3000'
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    container_name: nairaflow-admin
+    profiles: ['apps']
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api
+    ports:
+      - '3001:3001'
+
+volumes:
+  postgres_data:
+  redis_data:
