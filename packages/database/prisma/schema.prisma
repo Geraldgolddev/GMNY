@@ -1,0 +1,404 @@
+// ─────────────────────────────────────────────────────────────────────────
+// NairaFlow — Prisma schema
+//
+// Design principles:
+//  * Money is stored as BigInt "minor units" (cents / kobo / micro-USDC) to
+//    guarantee exact arithmetic. Exchange rates use Decimal for precision.
+//  * A double-entry-friendly ledger (Transaction) records every balance
+//    change, always tied to a Wallet and optionally a Transfer.
+//  * Every state-changing action is captured in AuditLog for compliance.
+//  * Soft references (indexes + FKs) keep the graph queryable and safe.
+// ─────────────────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  DISABLED
+}
+
+enum KycStatus {
+  NOT_STARTED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum Currency {
+  USD
+  USDC
+  NGN
+}
+
+enum BlockchainNetwork {
+  BASE_MAINNET
+  BASE_SEPOLIA
+}
+
+enum WalletType {
+  USER
+  TREASURY
+}
+
+enum TransferStatus {
+  DRAFT
+  QUOTE_LOCKED
+  AWAITING_FUNDING
+  FUNDED
+  ON_CHAIN_PENDING
+  ON_CHAIN_CONFIRMED
+  PAYOUT_PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  TRANSFER_DEBIT
+  TRANSFER_CREDIT
+  FEE
+  REFUND
+  TREASURY_REBALANCE
+}
+
+enum TransactionStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  REVERSED
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+  IN_APP
+}
+
+enum NotificationStatus {
+  QUEUED
+  SENT
+  FAILED
+  READ
+}
+
+enum AuditAction {
+  AUTH_REGISTER
+  AUTH_LOGIN
+  AUTH_LOGOUT
+  AUTH_REFRESH
+  AUTH_PASSWORD_CHANGE
+  USER_UPDATE
+  USER_ROLE_CHANGE
+  WALLET_CREATE
+  TRANSFER_CREATE
+  TRANSFER_STATUS_CHANGE
+  KYC_STATUS_CHANGE
+  ADMIN_ACTION
+}
+
+// ── Identity & Access ──────────────────────────────────────────────────────
+
+model User {
+  id           String     @id @default(uuid()) @db.Uuid
+  email        String     @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  phone        String?
+  role         UserRole   @default(USER)
+  status       UserStatus @default(PENDING)
+  kycStatus    KycStatus  @default(NOT_STARTED)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  refreshTokens RefreshToken[]
+  wallets       Wallet[]
+  recipients    Recipient[]
+  transfers     Transfer[]
+  notifications Notification[]
+  kycProfile    KycProfile?
+  auditLogs     AuditLog[]     @relation("AuditActor")
+
+  @@index([status])
+  @@index([role])
+  @@map("users")
+}
+
+/// Persisted, hashed refresh tokens enable rotation + server-side revocation.
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  tokenHash String    @unique
+  userAgent String?
+  ipAddress String?
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+// ── Compliance / KYC ───────────────────────────────────────────────────────
+
+model KycProfile {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @unique @db.Uuid
+  status         KycStatus @default(NOT_STARTED)
+  provider       String?
+  providerRef    String?
+  documents      Json?
+  riskScore      Int?
+  reviewedById   String?   @db.Uuid
+  reviewedAt     DateTime?
+  rejectionNote  String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  complianceFlags ComplianceFlag[]
+
+  @@index([status])
+  @@map("kyc_profiles")
+}
+
+model ComplianceFlag {
+  id           String     @id @default(uuid()) @db.Uuid
+  kycProfileId String     @db.Uuid
+  code         String
+  severity     String
+  description  String?
+  resolved     Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+
+  kycProfile KycProfile @relation(fields: [kycProfileId], references: [id], onDelete: Cascade)
+
+  @@index([kycProfileId])
+  @@map("compliance_flags")
+}
+
+// ── Wallets, Treasury & Ledger ─────────────────────────────────────────────
+
+model Wallet {
+  id          String            @id @default(uuid()) @db.Uuid
+  userId      String?           @db.Uuid
+  type        WalletType        @default(USER)
+  network     BlockchainNetwork @default(BASE_SEPOLIA)
+  currency    Currency          @default(USDC)
+  address     String?
+  custodyRef  String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  user             User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balances         Balance[]
+  transactions     Transaction[]
+  treasuryAccount  TreasuryAccount?
+
+  @@index([userId])
+  @@index([type])
+  @@map("wallets")
+}
+
+model Balance {
+  id          String   @id @default(uuid()) @db.Uuid
+  walletId    String   @db.Uuid
+  currency    Currency
+  amountMinor BigInt   @default(0)
+  updatedAt   DateTime @updatedAt
+
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@unique([walletId, currency])
+  @@map("balances")
+}
+
+model TreasuryAccount {
+  id        String            @id @default(uuid()) @db.Uuid
+  walletId  String            @unique @db.Uuid
+  label     String
+  network   BlockchainNetwork
+  currency  Currency
+  createdAt DateTime          @default(now())
+
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@map("treasury_accounts")
+}
+
+model Recipient {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @db.Uuid
+  fullName      String
+  bankName      String
+  bankCode      String
+  accountNumber String
+  currency      Currency @default(NGN)
+  country       String   @default("NG")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transfers Transfer[]
+
+  @@index([userId])
+  @@map("recipients")
+}
+
+// ── Exchange Rates ─────────────────────────────────────────────────────────
+
+model ExchangeRate {
+  id            String   @id @default(uuid()) @db.Uuid
+  baseCurrency  Currency
+  quoteCurrency Currency
+  rate          Decimal  @db.Decimal(24, 8)
+  source        String
+  validUntil    DateTime
+  createdAt     DateTime @default(now())
+
+  transfers Transfer[]
+
+  @@index([baseCurrency, quoteCurrency, createdAt])
+  @@map("exchange_rates")
+}
+
+// ── Transfers ──────────────────────────────────────────────────────────────
+
+model Transfer {
+  id               String         @id @default(uuid()) @db.Uuid
+  reference        String         @unique
+  senderId         String         @db.Uuid
+  recipientId      String?        @db.Uuid
+  exchangeRateId   String?        @db.Uuid
+  status           TransferStatus @default(DRAFT)
+  sourceCurrency   Currency       @default(USD)
+  sourceAmountMinor BigInt
+  destCurrency     Currency       @default(NGN)
+  destAmountMinor  BigInt
+  feeMinor         BigInt         @default(0)
+  quotedRate       Decimal        @db.Decimal(24, 8)
+  quoteExpiresAt   DateTime?
+  onChainTxHash    String?
+  failureReason    String?
+  completedAt      DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  sender             User                 @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  recipient          Recipient?           @relation(fields: [recipientId], references: [id])
+  exchangeRate       ExchangeRate?        @relation(fields: [exchangeRateId], references: [id])
+  transactions       Transaction[]
+  onChainTransaction OnChainTransaction?
+
+  @@index([senderId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("transfers")
+}
+
+model OnChainTransaction {
+  id            String            @id @default(uuid()) @db.Uuid
+  transferId    String            @unique @db.Uuid
+  network       BlockchainNetwork
+  txHash        String            @unique
+  fromAddress   String
+  toAddress     String
+  amountMinor   BigInt
+  confirmations Int               @default(0)
+  status        TransactionStatus @default(PENDING)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  transfer Transfer @relation(fields: [transferId], references: [id], onDelete: Cascade)
+
+  @@map("onchain_transactions")
+}
+
+/// Immutable ledger entry — every balance movement is recorded here.
+model Transaction {
+  id               String            @id @default(uuid()) @db.Uuid
+  walletId         String            @db.Uuid
+  transferId       String?           @db.Uuid
+  type             TransactionType
+  status           TransactionStatus @default(PENDING)
+  currency         Currency
+  amountMinor      BigInt
+  balanceAfterMinor BigInt
+  reference        String            @unique
+  metadata         Json?
+  createdAt        DateTime          @default(now())
+
+  wallet   Wallet    @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  transfer Transfer? @relation(fields: [transferId], references: [id])
+
+  @@index([walletId])
+  @@index([transferId])
+  @@index([type])
+  @@map("transactions")
+}
+
+// ── Notifications ──────────────────────────────────────────────────────────
+
+model Notification {
+  id        String              @id @default(uuid()) @db.Uuid
+  userId    String              @db.Uuid
+  channel   NotificationChannel
+  status    NotificationStatus  @default(QUEUED)
+  template  String
+  payload   Json?
+  sentAt    DateTime?
+  readAt    DateTime?
+  createdAt DateTime            @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("notifications")
+}
+
+// ── Audit ──────────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id         String      @id @default(uuid()) @db.Uuid
+  actorId    String?     @db.Uuid
+  action     AuditAction
+  entityType String
+  entityId   String?
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime    @default(now())
+
+  actor User? @relation("AuditActor", fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
