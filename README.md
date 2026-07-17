@@ -134,12 +134,42 @@ pnpm test                              # all unit tests
 pnpm --filter @nairaflow/api test:e2e  # API end-to-end (needs test DB)
 ```
 
+## Authentication
+
+Production-grade auth lives in `apps/api` (module `modules/auth`) on top of the
+framework-agnostic `@nairaflow/auth` package.
+
+| Method | Endpoint | Purpose |
+| ------ | -------- | ------- |
+| POST | `/api/auth/register` | Create account (PENDING) + send verification email |
+| POST | `/api/auth/login` | Authenticate → access token (body) + refresh cookie |
+| POST | `/api/auth/refresh` | Rotate the httpOnly refresh cookie |
+| POST | `/api/auth/logout` | Revoke current session + clear cookie |
+| POST | `/api/auth/verify-email` | Verify email via emailed token |
+| POST | `/api/auth/resend-verification` | Re-send the verification link |
+| POST | `/api/auth/forgot-password` | Request a reset link (always 200) |
+| POST | `/api/auth/reset-password` | Reset password + revoke all sessions |
+| GET | `/api/auth/sessions` | List active sessions |
+| DELETE | `/api/auth/sessions/:id` | Revoke a session |
+| GET | `/api/auth/me` | Current principal |
+
+Frontend pages (`apps/web`): `/register`, `/login`, `/verify-email`,
+`/forgot-password`, `/reset-password`, and a protected `/dashboard`.
+
+> **Dev tip:** when `NODE_ENV=development`, verification/reset responses include
+> the action link (`devVerificationUrl` / `devActionUrl`) and the API logs the
+> email body — so the whole flow is testable without a real inbox.
+
 ## Security model
 
-- Passwords hashed with **bcrypt** (configurable cost).
-- **Short-lived access tokens** + **rotating, hashed refresh tokens** (replay-safe).
+- Passwords hashed with **Argon2id** (`@node-rs/argon2`, OWASP-aligned, tunable cost).
+- **Short-lived access tokens** (body, held in memory) + **rotating, hashed refresh
+  tokens** delivered as an **httpOnly / sameSite / path-scoped cookie** (replay-safe).
+- **Email verification** and **password reset** via single-use, **hashed, expiring** tokens.
+- **Rate limiting** (`@nestjs/throttler`) globally + stricter on credential/enumeration routes.
+- **Anti-enumeration**: generic login errors + always-200 `forgot-password` + timing equalization.
 - **RBAC** enforced globally via guards (`USER` / `ADMIN`, with a role hierarchy).
-- **Helmet**, strict CORS allow-list, and whitelisting `ValidationPipe` on every endpoint.
+- **Helmet**, strict CORS allow-list, `cookie-parser`, and whitelisting `ValidationPipe` everywhere.
 - **Append-only audit log** for every state-changing action.
 
 ## Documentation

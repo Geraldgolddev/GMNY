@@ -61,16 +61,32 @@ double-entry-friendly, auditable history.
 
 ## 5. Authentication & authorization
 
+- **Password hashing** uses **Argon2id** via `@node-rs/argon2` (prebuilt binaries,
+  no native toolchain). Memory/time/parallelism cost are env-tunable.
 - **Registration/login** issue an access + refresh pair
   (`@nairaflow/auth.issueTokenPair`).
-- **Access tokens** are short-lived (`15m` default) and carry `sub`, `email`,
-  `role`.
+- **Access tokens** are short-lived (`15m` default), carry `sub`, `email`, `role`,
+  and are returned in the response body (held in memory by the SPA).
 - **Refresh tokens** are long-lived, carry a rotation id (`jti`), and only their
-  **SHA-256 hash** is persisted. On refresh we revoke the presented token and
-  issue a new one (**rotation**), defeating replay — verified by the e2e suite.
-- **Guards** run globally: `JwtAuthGuard` authenticates (bypassed by `@Public()`),
-  then `RolesGuard` authorizes via `@Roles()` metadata and a role hierarchy
-  (`ADMIN` ⊇ `USER`).
+  **SHA-256 hash** is persisted. They are delivered as an **httpOnly, sameSite,
+  path-scoped (`/api/auth`) cookie** — invisible to JS, mitigating XSS token
+  theft. On refresh we revoke the presented token and issue a new one
+  (**rotation**), defeating replay — verified by the e2e suite.
+- **Sessions** are the `RefreshToken` rows (device UA/IP captured); users can list
+  and revoke them, and a password reset revokes them all.
+- **Email verification & password reset** use the `VerificationToken` table:
+  a high-entropy random token is emailed, but only its **SHA-256 hash** is stored,
+  with a `type`, `expiresAt`, and `consumedAt` for one-time use. Consumption is
+  race-safe via a conditional `updateMany`.
+- **Email delivery** goes through a `MailService` (nodemailer) — SMTP when
+  configured, otherwise a dev transport that logs the link.
+- **Rate limiting** via `@nestjs/throttler`: a global limit plus stricter
+  `@Throttle` on `login`/`register`/`verify`/`forgot`/`reset`. Anti-enumeration:
+  generic login errors, always-200 `forgot-password`, and a dummy Argon2 verify to
+  equalize timing for unknown users.
+- **Guards** run globally in order: `ThrottlerGuard` (rate limit) →
+  `JwtAuthGuard` (authenticate, bypassed by `@Public()`) → `RolesGuard`
+  (authorize via `@Roles()` metadata and the `ADMIN` ⊇ `USER` hierarchy).
 
 ## 6. Cross-cutting concerns
 
