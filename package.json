@@ -1,0 +1,42 @@
+{
+  "name": "nairaflow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NairaFlow — USDC-powered cross-border payments. Send USD, settle as USDC on Base, deliver Nigerian Naira.",
+  "license": "MIT",
+  "packageManager": "pnpm@10.33.3",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "db:generate": "pnpm --filter @nairaflow/database db:generate",
+    "db:migrate": "pnpm --filter @nairaflow/database db:migrate",
+    "db:deploy": "pnpm --filter @nairaflow/database db:deploy",
+    "db:seed": "pnpm --filter @nairaflow/database db:seed",
+    "db:studio": "pnpm --filter @nairaflow/database db:studio"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "esbuild",
+      "@nestjs/core"
+    ]
+  }
+}
