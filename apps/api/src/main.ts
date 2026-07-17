@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
@@ -15,6 +16,7 @@ async function bootstrap(): Promise<void> {
   app.setGlobalPrefix(globalPrefix);
 
   app.use(helmet());
+  app.use(cookieParser(config.get<string>('cookie.secret')));
   app.enableCors({
     origin: config.get<string[]>('app.corsOrigins'),
     credentials: true,

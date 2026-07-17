@@ -3,6 +3,7 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MinLength,
   validateSync,
@@ -55,9 +56,60 @@ export class EnvironmentVariables {
   @IsString()
   JWT_REFRESH_TTL = '7d';
 
+  @IsString()
+  @MinLength(16, { message: 'COOKIE_SECRET must be at least 16 characters' })
+  COOKIE_SECRET!: string;
+
+  @IsString()
+  APP_WEB_URL = 'http://localhost:3000';
+
+  @IsString()
+  MAIL_FROM = 'NairaFlow <no-reply@nairaflow.io>';
+
+  @IsOptional()
+  @IsString()
+  SMTP_HOST?: string;
+
+  @Type(() => Number)
+  @IsOptional()
+  @IsInt()
+  SMTP_PORT?: number;
+
+  @IsOptional()
+  @IsString()
+  SMTP_USER?: string;
+
+  @IsOptional()
+  @IsString()
+  SMTP_PASS?: string;
+
   @Type(() => Number)
   @IsInt()
-  BCRYPT_SALT_ROUNDS = 12;
+  ARGON2_MEMORY_COST = 19_456;
+
+  @Type(() => Number)
+  @IsInt()
+  ARGON2_TIME_COST = 2;
+
+  @Type(() => Number)
+  @IsInt()
+  ARGON2_PARALLELISM = 1;
+
+  @Type(() => Number)
+  @IsInt()
+  THROTTLE_TTL = 60;
+
+  @Type(() => Number)
+  @IsInt()
+  THROTTLE_LIMIT = 120;
+
+  @Type(() => Number)
+  @IsInt()
+  EMAIL_VERIFICATION_TTL_HOURS = 24;
+
+  @Type(() => Number)
+  @IsInt()
+  PASSWORD_RESET_TTL_MINUTES = 30;
 }
 
 export function validateEnv(config: Record<string, unknown>): EnvironmentVariables {
