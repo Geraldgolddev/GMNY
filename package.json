@@ -1,8 +1,8 @@
 {
-  "name": "nairaflow",
+  "name": "gmny",
   "version": "0.1.0",
   "private": true,
-  "description": "NairaFlow — USDC-powered cross-border payments. Send USD, settle as USDC on Base, deliver Nigerian Naira.",
+  "description": "GMNY — USDC-powered cross-border payments. Send USD, settle as USDC on Base, deliver Nigerian Naira.",
   "license": "MIT",
   "packageManager": "pnpm@10.33.3",
   "engines": {
@@ -18,11 +18,11 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "clean": "turbo run clean && rm -rf node_modules",
-    "db:generate": "pnpm --filter @nairaflow/database db:generate",
-    "db:migrate": "pnpm --filter @nairaflow/database db:migrate",
-    "db:deploy": "pnpm --filter @nairaflow/database db:deploy",
-    "db:seed": "pnpm --filter @nairaflow/database db:seed",
-    "db:studio": "pnpm --filter @nairaflow/database db:studio"
+    "db:generate": "pnpm --filter @gmny/database db:generate",
+    "db:migrate": "pnpm --filter @gmny/database db:migrate",
+    "db:deploy": "pnpm --filter @gmny/database db:deploy",
+    "db:seed": "pnpm --filter @gmny/database db:seed",
+    "db:studio": "pnpm --filter @gmny/database db:studio"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",

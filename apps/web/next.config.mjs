@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   // Compile shared workspace packages from source (no pre-build step needed).
-  transpilePackages: ['@nairaflow/ui', '@nairaflow/shared'],
+  transpilePackages: ['@gmny/ui', '@gmny/shared'],
 };
 
 export default nextConfig;

@@ -12,7 +12,7 @@ import {
   CardTitle,
   Input,
   Label,
-} from '@nairaflow/ui';
+} from '@gmny/ui';
 import { api, ApiClientError } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 
@@ -45,7 +45,7 @@ export default function RegisterPage() {
     <main className="flex min-h-screen items-center justify-center bg-emerald-950 px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Create your NairaFlow account</CardTitle>
+          <CardTitle>Create your GMNY account</CardTitle>
           <CardDescription>Start sending money home in minutes.</CardDescription>
         </CardHeader>
         <CardContent>

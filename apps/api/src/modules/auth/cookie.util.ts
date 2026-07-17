@@ -1,7 +1,7 @@
 import type { CookieOptions, Response } from 'express';
 
 /** Name of the httpOnly refresh-token cookie. */
-export const REFRESH_COOKIE = 'nf_refresh';
+export const REFRESH_COOKIE = 'gmny_refresh';
 
 /** Path the refresh cookie is scoped to (auth endpoints only). */
 const COOKIE_PATH = '/api/auth';

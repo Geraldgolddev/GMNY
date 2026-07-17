@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────
-# NairaFlow local orchestration.
+# GMNY local orchestration.
 #
 #   docker compose up -d postgres redis     # infra only (recommended for dev)
 #   docker compose --profile apps up --build # full stack (api + web + admin)
@@ -7,25 +7,25 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: nairaflow-postgres
+    container_name: gmny-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: nairaflow
-      POSTGRES_PASSWORD: nairaflow
-      POSTGRES_DB: nairaflow
+      POSTGRES_USER: gmny
+      POSTGRES_PASSWORD: gmny
+      POSTGRES_DB: gmny
     ports:
       - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U nairaflow']
+      test: ['CMD-SHELL', 'pg_isready -U gmny']
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7-alpine
-    container_name: nairaflow-redis
+    container_name: gmny-redis
     restart: unless-stopped
     ports:
       - '6379:6379'
@@ -41,7 +41,7 @@ services:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
-    container_name: nairaflow-api
+    container_name: gmny-api
     profiles: ['apps']
     depends_on:
       postgres:
@@ -50,7 +50,7 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://nairaflow:nairaflow@postgres:5432/nairaflow?schema=public
+      DATABASE_URL: postgresql://gmny:gmny@postgres:5432/gmny?schema=public
       REDIS_URL: redis://redis:6379
       API_PORT: 4000
       API_GLOBAL_PREFIX: api
@@ -64,7 +64,7 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-    container_name: nairaflow-web
+    container_name: gmny-web
     profiles: ['apps']
     depends_on:
       - api
@@ -77,7 +77,7 @@ services:
     build:
       context: .
       dockerfile: apps/admin/Dockerfile
-    container_name: nairaflow-admin
+    container_name: gmny-admin
     profiles: ['apps']
     depends_on:
       - api

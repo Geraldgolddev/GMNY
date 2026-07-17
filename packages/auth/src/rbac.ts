@@ -1,4 +1,4 @@
-import { UserRole } from '@nairaflow/shared';
+import { UserRole } from '@gmny/shared';
 
 /**
  * Role hierarchy: an ADMIN implicitly satisfies any USER-level requirement.

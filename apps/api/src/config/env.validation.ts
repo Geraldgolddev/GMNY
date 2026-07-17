@@ -64,7 +64,7 @@ export class EnvironmentVariables {
   APP_WEB_URL = 'http://localhost:3000';
 
   @IsString()
-  MAIL_FROM = 'NairaFlow <no-reply@nairaflow.io>';
+  MAIL_FROM = 'GMNY <no-reply@gmny.io>';
 
   @IsOptional()
   @IsString()

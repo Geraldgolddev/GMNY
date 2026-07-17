@@ -81,7 +81,7 @@ export function configuration(): Configuration {
       parallelism: parseInt(process.env.ARGON2_PARALLELISM ?? '1', 10),
     },
     mail: {
-      from: process.env.MAIL_FROM ?? 'NairaFlow <no-reply@nairaflow.io>',
+      from: process.env.MAIL_FROM ?? 'GMNY <no-reply@gmny.io>',
       smtpHost: process.env.SMTP_HOST,
       smtpPort: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : undefined,
       smtpUser: process.env.SMTP_USER,

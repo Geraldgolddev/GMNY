@@ -5,8 +5,8 @@ import {
   UnauthorizedError,
   UserRole,
   UserStatus,
-} from '@nairaflow/shared';
-import { hashPassword } from '@nairaflow/auth';
+} from '@gmny/shared';
+import { hashPassword } from '@gmny/auth';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
@@ -63,7 +63,7 @@ describe('AuthService — registration & login', () => {
     (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
     (prisma.user.create as jest.Mock).mockResolvedValue({
       id: 'u1',
-      email: 'jane@nairaflow.io',
+      email: 'jane@gmny.io',
       firstName: 'Jane',
       lastName: 'Doe',
       passwordHash: 'x',
@@ -77,7 +77,7 @@ describe('AuthService — registration & login', () => {
       ctx,
     );
 
-    expect(session.result.user.email).toBe('jane@nairaflow.io');
+    expect(session.result.user.email).toBe('jane@gmny.io');
     expect(session.result.user.emailVerified).toBe(false);
     expect(session.refreshToken).toBeTruthy();
     expect(session.result.tokens.accessToken).toBeTruthy();
@@ -103,7 +103,7 @@ describe('AuthService — registration & login', () => {
     const passwordHash = await hashPassword('Str0ng!Pass', FAST_ARGON);
     (prisma.user.findUnique as jest.Mock).mockResolvedValue({
       id: 'u1',
-      email: 'jane@nairaflow.io',
+      email: 'jane@gmny.io',
       firstName: 'Jane',
       lastName: 'Doe',
       passwordHash,
@@ -113,7 +113,7 @@ describe('AuthService — registration & login', () => {
     });
     (prisma.user.update as jest.Mock).mockResolvedValue({});
 
-    const session = await service.login({ email: 'jane@nairaflow.io', password: 'Str0ng!Pass' }, ctx);
+    const session = await service.login({ email: 'jane@gmny.io', password: 'Str0ng!Pass' }, ctx);
     expect(session.result.user.id).toBe('u1');
     expect(session.result.user.emailVerified).toBe(true);
   });
@@ -123,13 +123,13 @@ describe('AuthService — registration & login', () => {
     const passwordHash = await hashPassword('Str0ng!Pass', FAST_ARGON);
     (prisma.user.findUnique as jest.Mock).mockResolvedValue({
       id: 'u1',
-      email: 'jane@nairaflow.io',
+      email: 'jane@gmny.io',
       passwordHash,
       role: UserRole.USER,
       status: UserStatus.ACTIVE,
     });
     await expect(
-      service.login({ email: 'jane@nairaflow.io', password: 'wrong-password' }, ctx),
+      service.login({ email: 'jane@gmny.io', password: 'wrong-password' }, ctx),
     ).rejects.toBeInstanceOf(UnauthorizedError);
   });
 

@@ -1,6 +1,6 @@
 # AGENTS.md
 
-NairaFlow is a **pnpm + Turborepo monorepo** (`apps/*`, `packages/*`). Node ≥ 20, pnpm ≥ 9.
+GMNY is a **pnpm + Turborepo monorepo** (`apps/*`, `packages/*`). Node ≥ 20, pnpm ≥ 9.
 Standard commands live in the root `package.json` and each package's `package.json`; see
 `README.md` and `docs/ARCHITECTURE.md` for the full picture.
 
@@ -25,9 +25,9 @@ sudo apt-get update && sudo apt-get install -y postgresql postgresql-contrib red
 Then create the role + databases (idempotent):
 
 ```bash
-sudo -u postgres psql -c "CREATE ROLE nairaflow LOGIN PASSWORD 'nairaflow' CREATEDB;" 2>/dev/null || true
-sudo -u postgres createdb -O nairaflow nairaflow 2>/dev/null || true
-sudo -u postgres createdb -O nairaflow nairaflow_test 2>/dev/null || true
+sudo -u postgres psql -c "CREATE ROLE gmny LOGIN PASSWORD 'gmny' CREATEDB;" 2>/dev/null || true
+sudo -u postgres createdb -O gmny gmny 2>/dev/null || true
+sudo -u postgres createdb -O gmny gmny_test 2>/dev/null || true
 ```
 
 ### Environment file (non-obvious)
@@ -37,14 +37,14 @@ sudo -u postgres createdb -O nairaflow nairaflow_test 2>/dev/null || true
   `packages/database`, so `DATABASE_URL` must be present in that process. Either export it
   inline or run migrations like:
   ```bash
-  cd packages/database && DATABASE_URL="postgresql://nairaflow:nairaflow@127.0.0.1:5432/nairaflow?schema=public" pnpm exec prisma migrate deploy
+  cd packages/database && DATABASE_URL="postgresql://gmny:gmny@127.0.0.1:5432/gmny?schema=public" pnpm exec prisma migrate deploy
   ```
 
 ### Running things
 - `pnpm dev` runs **all** apps (api :4000, web :3000, admin :3001). Use
-  `pnpm --filter @nairaflow/api dev` etc. to run one. Swagger: `http://localhost:4000/api/docs`.
-- Seeded logins after `pnpm db:seed`: `admin@nairaflow.io` / `Admin!12345`,
-  `demo@nairaflow.io` / `Demo!12345`.
+  `pnpm --filter @gmny/api dev` etc. to run one. Swagger: `http://localhost:4000/api/docs`.
+- Seeded logins after `pnpm db:seed`: `admin@gmny.io` / `Admin!12345`,
+  `demo@gmny.io` / `Demo!12345`.
 
 ### Package build model (important gotcha)
 - `packages/{shared,auth,blockchain,database}` are **compiled to `dist/`** and consumed by
@@ -63,10 +63,10 @@ sudo -u postgres createdb -O nairaflow nairaflow_test 2>/dev/null || true
 ### Tests
 - Unit: `pnpm test` (Turbo, all packages).
 - API e2e boots the real app against the **test** database — point `DATABASE_URL` at
-  `nairaflow_test` (already migrated) and provide JWT secrets, e.g.:
+  `gmny_test` (already migrated) and provide JWT secrets, e.g.:
   ```bash
   cd apps/api && NODE_ENV=test \
-    DATABASE_URL="postgresql://nairaflow:nairaflow@127.0.0.1:5432/nairaflow_test?schema=public" \
+    DATABASE_URL="postgresql://gmny:gmny@127.0.0.1:5432/gmny_test?schema=public" \
     REDIS_URL="redis://127.0.0.1:6379" \
     JWT_ACCESS_SECRET="test-access-secret-000000000000" \
     JWT_REFRESH_SECRET="test-refresh-secret-11111111111" \
@@ -78,5 +78,5 @@ sudo -u postgres createdb -O nairaflow nairaflow_test 2>/dev/null || true
   global limiter doesn't interfere (the strict per-route `@Throttle` still applies).
 - Passwords use **Argon2id** via `@node-rs/argon2` (prebuilt binaries — no native
   build toolchain needed). The refresh token is delivered as an httpOnly cookie
-  (`nf_refresh`, path `/api/auth`); e2e must set the global prefix to `api` and use
+  (`gmny_refresh`, path `/api/auth`); e2e must set the global prefix to `api` and use
   `cookie-parser` so the cookie path matches (see `apps/api/test/auth.e2e-spec.ts`).

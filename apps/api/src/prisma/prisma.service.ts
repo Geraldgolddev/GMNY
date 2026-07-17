@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient } from '@nairaflow/database';
+import { PrismaClient } from '@gmny/database';
 
 /**
  * Wraps the generated Prisma client as an injectable, lifecycle-aware service.

@@ -1,4 +1,4 @@
-# Contributing to NairaFlow
+# Contributing to GMNY
 
 Thanks for contributing! This guide covers local setup and the conventions we follow.
 
@@ -54,5 +54,5 @@ Never edit an already-applied migration; create a new one.
 pnpm lint
 pnpm typecheck
 pnpm test
-pnpm --filter @nairaflow/api test:e2e   # requires the test database
+pnpm --filter @gmny/api test:e2e   # requires the test database
 ```

@@ -1,4 +1,4 @@
-# NairaFlow — Architecture
+# GMNY — Architecture
 
 This document explains the system design and the key decisions behind it.
 
@@ -64,7 +64,7 @@ double-entry-friendly, auditable history.
 - **Password hashing** uses **Argon2id** via `@node-rs/argon2` (prebuilt binaries,
   no native toolchain). Memory/time/parallelism cost are env-tunable.
 - **Registration/login** issue an access + refresh pair
-  (`@nairaflow/auth.issueTokenPair`).
+  (`@gmny/auth.issueTokenPair`).
 - **Access tokens** are short-lived (`15m` default), carry `sub`, `email`, `role`,
   and are returned in the response body (held in memory by the SPA).
 - **Refresh tokens** are long-lived, carry a rotation id (`jti`), and only their

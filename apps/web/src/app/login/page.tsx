@@ -12,7 +12,7 @@ import {
   CardTitle,
   Input,
   Label,
-} from '@nairaflow/ui';
+} from '@gmny/ui';
 import { api, ApiClientError } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 
@@ -46,7 +46,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Welcome back</CardTitle>
-          <CardDescription>Log in to your NairaFlow account.</CardDescription>
+          <CardDescription>Log in to your GMNY account.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
@@ -79,7 +79,7 @@ export default function LoginPage() {
             </Button>
           </form>
           <p className="mt-4 text-center text-sm text-emerald-700">
-            New to NairaFlow?{' '}
+            New to GMNY?{' '}
             <Link href="/register" className="font-semibold underline">
               Create an account
             </Link>

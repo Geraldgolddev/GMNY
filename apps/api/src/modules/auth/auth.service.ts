@@ -8,7 +8,7 @@ import {
   hashToken,
   generateSecureToken,
   type TokenConfig,
-} from '@nairaflow/auth';
+} from '@gmny/auth';
 import {
   AuditAction,
   ConflictError,
@@ -17,8 +17,8 @@ import {
   UserRole,
   UserStatus,
   TokenType,
-} from '@nairaflow/shared';
-import type { User } from '@nairaflow/database';
+} from '@gmny/shared';
+import type { User } from '@gmny/database';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuditService, type AuditContext } from '../audit/audit.service';
 import { MailService } from '../mail/mail.service';
@@ -69,7 +69,7 @@ export class AuthService {
       action: AuditAction.AUTH_REGISTER,
       entityType: 'User',
       entityId: user.id,
-      actorId: user.id,
+      userId: user.id,
       context: ctx,
     });
 
@@ -102,7 +102,7 @@ export class AuthService {
       action: AuditAction.AUTH_LOGIN,
       entityType: 'User',
       entityId: user.id,
-      actorId: user.id,
+      userId: user.id,
       context: ctx,
     });
 
@@ -135,7 +135,7 @@ export class AuthService {
       action: AuditAction.AUTH_REFRESH,
       entityType: 'User',
       entityId: user.id,
-      actorId: user.id,
+      userId: user.id,
       context: ctx,
     });
 
@@ -153,7 +153,7 @@ export class AuthService {
       action: AuditAction.AUTH_LOGOUT,
       entityType: 'User',
       entityId: actorId,
-      actorId,
+      userId: actorId,
     });
   }
 
@@ -173,7 +173,7 @@ export class AuthService {
       action: AuditAction.AUTH_EMAIL_VERIFY,
       entityType: 'User',
       entityId: userId,
-      actorId: userId,
+      userId: userId,
       context: ctx,
     });
   }
@@ -210,7 +210,7 @@ export class AuthService {
       action: AuditAction.AUTH_FORGOT_PASSWORD,
       entityType: 'User',
       entityId: user.id,
-      actorId: user.id,
+      userId: user.id,
       context: ctx,
     });
     return this.isDev() ? link : undefined;
@@ -233,7 +233,7 @@ export class AuthService {
       action: AuditAction.AUTH_RESET_PASSWORD,
       entityType: 'User',
       entityId: userId,
-      actorId: userId,
+      userId: userId,
       context: ctx,
     });
   }
@@ -269,7 +269,7 @@ export class AuthService {
       action: AuditAction.AUTH_SESSION_REVOKE,
       entityType: 'RefreshToken',
       entityId: session.id,
-      actorId: userId,
+      userId: userId,
     });
   }
 
@@ -292,7 +292,7 @@ export class AuthService {
       action: AuditAction.AUTH_EMAIL_VERIFICATION_SENT,
       entityType: 'User',
       entityId: user.id,
-      actorId: user.id,
+      userId: user.id,
     });
     return this.isDev() ? link : undefined;
   }
@@ -357,7 +357,7 @@ export class AuthService {
       refreshSecret: this.config.get<string>('jwt.refreshSecret') as string,
       accessTtl: this.config.get<string>('jwt.accessTtl') as string,
       refreshTtl: this.config.get<string>('jwt.refreshTtl') as string,
-      issuer: 'nairaflow',
+      issuer: 'gmny',
     };
   }
 

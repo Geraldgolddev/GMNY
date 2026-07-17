@@ -11,7 +11,7 @@ import {
   CardTitle,
   Input,
   Label,
-} from '@nairaflow/ui';
+} from '@gmny/ui';
 import { api, ApiClientError } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 
@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-emerald-950 px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>NairaFlow Admin</CardTitle>
+          <CardTitle>GMNY Admin</CardTitle>
           <CardDescription>Sign in with an administrator account.</CardDescription>
         </CardHeader>
         <CardContent>

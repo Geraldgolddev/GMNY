@@ -1,5 +1,5 @@
 import { CircleClient } from './circle-client';
-import { UpstreamError } from '@nairaflow/shared';
+import { UpstreamError } from '@gmny/shared';
 
 function mockFetch(response: { ok: boolean; status: number; body: unknown }): typeof fetch {
   return (async () =>

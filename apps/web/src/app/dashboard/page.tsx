@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@nairaflow/ui';
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@gmny/ui';
 import { api, type SessionInfo, type UserProfile } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 import { Protected } from '@/components/protected';

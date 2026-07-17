@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { UserRole } from '@nairaflow/shared';
+import { UserRole } from '@gmny/shared';
 
 export const ROLES_KEY = 'roles';
 

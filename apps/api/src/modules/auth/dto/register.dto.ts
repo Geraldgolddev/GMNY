@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { MIN_PASSWORD_LENGTH } from '@nairaflow/shared';
+import { MIN_PASSWORD_LENGTH } from '@gmny/shared';
 
 export class RegisterDto {
-  @ApiProperty({ example: 'jane@nairaflow.io' })
+  @ApiProperty({ example: 'jane@gmny.io' })
   @IsEmail()
   email!: string;
 

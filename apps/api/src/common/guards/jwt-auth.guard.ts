@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import { verifyAccessToken } from '@nairaflow/auth';
-import type { AuthenticatedUser } from '@nairaflow/shared';
+import { verifyAccessToken } from '@gmny/auth';
+import type { AuthenticatedUser } from '@gmny/shared';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 
 /**

@@ -3,7 +3,7 @@ import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 
 export const metadata: Metadata = {
-  title: 'NairaFlow — Send Dollars. Receive Naira. Instantly.',
+  title: 'GMNY — Send Dollars. Receive Naira. Instantly.',
   description: 'USDC-powered cross-border payments from the US to Nigeria, settled on Base.',
 };
 

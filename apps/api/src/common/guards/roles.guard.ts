@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { hasRequiredRole } from '@nairaflow/auth';
-import { UserRole, type AuthenticatedUser } from '@nairaflow/shared';
+import { hasRequiredRole } from '@gmny/auth';
+import { UserRole, type AuthenticatedUser } from '@gmny/shared';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 
 /**

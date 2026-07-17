@@ -1,5 +1,5 @@
 import { hasRequiredRole } from './rbac';
-import { UserRole } from '@nairaflow/shared';
+import { UserRole } from '@gmny/shared';
 
 describe('hasRequiredRole', () => {
   it('allows any role when no requirement is set', () => {

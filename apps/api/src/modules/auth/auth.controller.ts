@@ -15,7 +15,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
-import type { AuthenticatedUser } from '@nairaflow/shared';
+import type { AuthenticatedUser } from '@gmny/shared';
 import { AuthService, type IssuedSession } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';

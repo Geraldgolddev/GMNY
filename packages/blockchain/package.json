@@ -1,8 +1,8 @@
 {
-  "name": "@nairaflow/blockchain",
+  "name": "@gmny/blockchain",
   "version": "0.1.0",
   "private": true,
-  "description": "Typed Circle API client and Base/USDC helpers for NairaFlow.",
+  "description": "Typed Circle API client and Base/USDC helpers for GMNY.",
   "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,7 +22,7 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@nairaflow/shared": "workspace:*"
+    "@gmny/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",

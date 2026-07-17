@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { api, type AuthResult, type AuthUser } from './api';
 
-const STORAGE_KEY = 'nairaflow.access';
+const STORAGE_KEY = 'gmny.access';
 
 interface AuthContextValue {
   user: AuthUser | null;

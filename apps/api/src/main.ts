@@ -35,7 +35,7 @@ async function bootstrap(): Promise<void> {
 
   // OpenAPI / Swagger — every endpoint is documented.
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('NairaFlow API')
+    .setTitle('GMNY API')
     .setDescription('USDC-powered cross-border payments — USD → USDC (Base) → NGN.')
     .setVersion('0.1.0')
     .addBearerAuth()
@@ -45,7 +45,7 @@ async function bootstrap(): Promise<void> {
 
   const port = config.get<number>('app.port') ?? 4000;
   await app.listen(port, '0.0.0.0');
-  logger.log(`NairaFlow API running on http://localhost:${port}/${globalPrefix}`);
+  logger.log(`GMNY API running on http://localhost:${port}/${globalPrefix}`);
   logger.log(`Swagger docs at http://localhost:${port}/${globalPrefix}/docs`);
 }
 

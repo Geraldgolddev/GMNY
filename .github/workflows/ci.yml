@@ -14,13 +14,13 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: nairaflow
-          POSTGRES_PASSWORD: nairaflow
-          POSTGRES_DB: nairaflow_test
+          POSTGRES_USER: gmny
+          POSTGRES_PASSWORD: gmny
+          POSTGRES_DB: gmny_test
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U nairaflow"
+          --health-cmd "pg_isready -U gmny"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -35,7 +35,7 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: postgresql://nairaflow:nairaflow@localhost:5432/nairaflow_test?schema=public
+      DATABASE_URL: postgresql://gmny:gmny@localhost:5432/gmny_test?schema=public
       REDIS_URL: redis://localhost:6379
       JWT_ACCESS_SECRET: ci-access-secret-000000000000000000
       JWT_REFRESH_SECRET: ci-refresh-secret-11111111111111111
@@ -69,7 +69,7 @@ jobs:
         run: pnpm test
 
       - name: Apply migrations (test DB)
-        run: pnpm --filter @nairaflow/database db:deploy
+        run: pnpm --filter @gmny/database db:deploy
 
       - name: API e2e tests
-        run: pnpm --filter @nairaflow/api test:e2e
+        run: pnpm --filter @gmny/api test:e2e

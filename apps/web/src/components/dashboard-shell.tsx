@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Button } from '@nairaflow/ui';
+import { Button } from '@gmny/ui';
 import { useAuth } from '@/lib/auth-context';
 
 /** Authenticated dashboard chrome: top bar with brand, user, and logout. */
@@ -19,8 +19,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <header className="border-b border-emerald-100 bg-white">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
           <span className="text-xl font-black">
-            <span className="text-emerald-700">Naira</span>
-            <span className="text-amber-500">Flow</span>
+            <span className="text-emerald-700">GM</span>
+            <span className="text-amber-500">NY</span>
           </span>
           <div className="flex items-center gap-4">
             <span className="hidden text-sm text-emerald-700 sm:inline">{user?.email}</span>

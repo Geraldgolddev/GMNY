@@ -1,4 +1,4 @@
-import { UpstreamError } from '@nairaflow/shared';
+import { UpstreamError } from '@gmny/shared';
 
 export interface CircleClientConfig {
   apiKey: string;

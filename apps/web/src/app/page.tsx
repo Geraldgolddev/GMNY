@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight, ShieldCheck, Zap, Globe } from 'lucide-react';
-import { Button } from '@nairaflow/ui';
+import { Button } from '@gmny/ui';
 
 export default function LandingPage() {
   return (
@@ -8,8 +8,8 @@ export default function LandingPage() {
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <div className="flex items-center gap-2">
           <span className="text-2xl font-black tracking-tight">
-            <span className="text-emerald-400">Naira</span>
-            <span className="text-amber-400">Flow</span>
+            <span className="text-emerald-400">GM</span>
+            <span className="text-amber-400">NY</span>
           </span>
         </div>
         <nav className="flex items-center gap-3">
@@ -34,7 +34,7 @@ export default function LandingPage() {
           <span className="text-amber-400">Receive Naira. Instantly.</span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg text-emerald-100">
-          NairaFlow settles your USD as USDC on Base and delivers Nigerian Naira directly to a
+          GMNY settles your USD as USDC on Base and delivers Nigerian Naira directly to a
           recipient&apos;s bank account — secure, transparent, and fast.
         </p>
         <div className="mt-10 flex items-center justify-center gap-4">

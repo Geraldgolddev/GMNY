@@ -1,6 +1,6 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import jwt, { type SignOptions, type VerifyOptions } from 'jsonwebtoken';
-import type { JwtAccessPayload, JwtRefreshPayload, UserRole } from '@nairaflow/shared';
+import type { JwtAccessPayload, JwtRefreshPayload, UserRole } from '@gmny/shared';
 
 export interface TokenConfig {
   accessSecret: string;

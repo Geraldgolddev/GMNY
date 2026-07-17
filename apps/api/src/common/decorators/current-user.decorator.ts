@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import type { AuthenticatedUser } from '@nairaflow/shared';
+import type { AuthenticatedUser } from '@gmny/shared';
 
 /** Injects the authenticated principal (populated by JwtAuthGuard). */
 export const CurrentUser = createParamDecorator(

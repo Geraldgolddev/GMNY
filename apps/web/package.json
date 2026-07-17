@@ -1,8 +1,8 @@
 {
-  "name": "@nairaflow/web",
+  "name": "@gmny/web",
   "version": "0.1.0",
   "private": true,
-  "description": "NairaFlow customer web app (Next.js 15).",
+  "description": "GMNY customer web app (Next.js 15).",
   "license": "MIT",
   "scripts": {
     "dev": "next dev -p 3000",
@@ -13,8 +13,8 @@
     "clean": "rm -rf .next .turbo"
   },
   "dependencies": {
-    "@nairaflow/shared": "workspace:*",
-    "@nairaflow/ui": "workspace:*",
+    "@gmny/shared": "workspace:*",
+    "@gmny/ui": "workspace:*",
     "lucide-react": "^0.469.0",
     "next": "^15.1.6",
     "react": "^19.0.0",

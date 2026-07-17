@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@nairaflow/ui', '@nairaflow/shared'],
+  transpilePackages: ['@gmny/ui', '@gmny/shared'],
 };
 
 export default nextConfig;

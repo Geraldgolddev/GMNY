@@ -12,7 +12,7 @@ import {
   CardTitle,
   Input,
   Label,
-} from '@nairaflow/ui';
+} from '@gmny/ui';
 import { api, ApiClientError } from '@/lib/api';
 
 function ResetPasswordForm() {

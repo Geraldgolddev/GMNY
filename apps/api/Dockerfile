@@ -1,4 +1,4 @@
-# ── NairaFlow API — multi-stage build ────────────────────────
+# ── GMNY API — multi-stage build ────────────────────────
 FROM node:22-alpine AS base
 RUN corepack enable && corepack prepare pnpm@10.33.3 --activate
 WORKDIR /app
@@ -17,10 +17,10 @@ RUN pnpm install --frozen-lockfile
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm --filter @nairaflow/shared --filter @nairaflow/auth \
-        --filter @nairaflow/blockchain --filter @nairaflow/database build \
- && pnpm --filter @nairaflow/api build \
- && pnpm --filter @nairaflow/api --prod deploy /out
+RUN pnpm --filter @gmny/shared --filter @gmny/auth \
+        --filter @gmny/blockchain --filter @gmny/database build \
+ && pnpm --filter @gmny/api build \
+ && pnpm --filter @gmny/api --prod deploy /out
 
 # ── Runtime ──────────────────────────────────────────────────
 FROM node:22-alpine AS runtime

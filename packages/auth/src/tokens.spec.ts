@@ -6,14 +6,14 @@ import {
   signAccessToken,
   generateSecureToken,
 } from './tokens';
-import { UserRole } from '@nairaflow/shared';
+import { UserRole } from '@gmny/shared';
 
 const config = {
   accessSecret: 'test-access-secret',
   refreshSecret: 'test-refresh-secret',
   accessTtl: '15m',
   refreshTtl: '7d',
-  issuer: 'nairaflow-test',
+  issuer: 'gmny-test',
 };
 
 const user = { id: 'user-1', email: 'a@b.com', role: UserRole.USER };

@@ -7,8 +7,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { DomainError } from '@nairaflow/shared';
-import type { ApiError } from '@nairaflow/shared';
+import { DomainError } from '@gmny/shared';
+import type { ApiError } from '@gmny/shared';
 
 /**
  * Central exception filter that renders every error as the standard

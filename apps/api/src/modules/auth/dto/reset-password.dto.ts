@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, MaxLength, MinLength } from 'class-validator';
-import { MIN_PASSWORD_LENGTH } from '@nairaflow/shared';
+import { MIN_PASSWORD_LENGTH } from '@gmny/shared';
 
 export class ResetPasswordDto {
   @ApiProperty({ description: 'The opaque reset token from the emailed link.' })

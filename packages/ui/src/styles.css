@@ -1,6 +1,6 @@
-/* Shared design tokens for NairaFlow surfaces. Imported by app globals. */
+/* Shared design tokens for GMNY surfaces. Imported by app globals. */
 :root {
-  --nf-emerald: #047857;
-  --nf-emerald-dark: #064e3b;
-  --nf-gold: #f59e0b;
+  --gmny-emerald: #047857;
+  --gmny-emerald-dark: #064e3b;
+  --gmny-gold: #f59e0b;
 }

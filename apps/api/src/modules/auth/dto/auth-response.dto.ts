@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { UserRole, UserStatus } from '@nairaflow/shared';
+import { UserRole, UserStatus } from '@gmny/shared';
 
 export class AuthUserDto {
   @ApiProperty() id!: string;

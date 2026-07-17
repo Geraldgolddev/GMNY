@@ -1,8 +1,8 @@
 {
-  "name": "@nairaflow/api",
+  "name": "@gmny/api",
   "version": "0.1.0",
   "private": true,
-  "description": "NairaFlow API — NestJS backend (auth, users, wallets, transfers, treasury).",
+  "description": "GMNY API — NestJS backend (auth, users, wallets, transfers, treasury).",
   "license": "MIT",
   "scripts": {
     "build": "nest build",
@@ -16,10 +16,10 @@
     "clean": "rm -rf dist .turbo coverage"
   },
   "dependencies": {
-    "@nairaflow/auth": "workspace:*",
-    "@nairaflow/blockchain": "workspace:*",
-    "@nairaflow/database": "workspace:*",
-    "@nairaflow/shared": "workspace:*",
+    "@gmny/auth": "workspace:*",
+    "@gmny/blockchain": "workspace:*",
+    "@gmny/database": "workspace:*",
+    "@gmny/shared": "workspace:*",
     "@nestjs/common": "^11.0.6",
     "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.6",

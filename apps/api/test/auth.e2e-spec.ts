@@ -14,7 +14,7 @@ import { PrismaService } from '../src/prisma/prisma.service';
 describe('Auth (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
-  const email = `e2e_${Date.now()}@nairaflow.io`;
+  const email = `e2e_${Date.now()}@gmny.io`;
   const password = 'Str0ng!Pass1';
   const newPassword = 'N3w!Str0ngPass2';
 
@@ -59,7 +59,7 @@ describe('Auth (e2e)', () => {
     expect(res.body.data.tokens.accessToken).toBeTruthy();
     expect(res.body.data.tokens.refreshToken).toBeUndefined();
     const cookies = res.headers['set-cookie'] as unknown as string[];
-    expect(cookies.join(';')).toContain('nf_refresh=');
+    expect(cookies.join(';')).toContain('gmny_refresh=');
     accessToken = res.body.data.tokens.accessToken;
     verifyToken = tokenFromUrl(res.body.data.devVerificationUrl);
   });
@@ -140,7 +140,7 @@ describe('Auth (e2e)', () => {
   it('does not reveal whether an email exists on forgot-password (200)', async () => {
     const res = await agent()
       .post('/api/auth/forgot-password')
-      .send({ email: 'definitely-not-here@nairaflow.io' })
+      .send({ email: 'definitely-not-here@gmny.io' })
       .expect(200);
     expect(res.body.data.devActionUrl).toBeUndefined();
   });

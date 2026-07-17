@@ -1,5 +1,5 @@
 import { hash, verify, type Options } from '@node-rs/argon2';
-import { MIN_PASSWORD_LENGTH } from '@nairaflow/shared';
+import { MIN_PASSWORD_LENGTH } from '@gmny/shared';
 
 export interface Argon2Params {
   /** Memory cost in KiB. */

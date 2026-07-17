@@ -1,8 +1,8 @@
-# NairaFlow
+# GMNY
 
 > **Send Dollars. Receive Naira. Instantly.** — USDC-powered cross-border payments.
 
-NairaFlow lets users in the United States send USD that settles as **USDC on Base**
+GMNY lets users in the United States send USD that settles as **USDC on Base**
 and is delivered as **Nigerian Naira** directly into a recipient's bank account.
 
 This repository is a production-oriented **monorepo** (pnpm + Turborepo) containing the
@@ -28,13 +28,13 @@ customer web app, admin console, API, and shared domain packages.
 
 ## Architecture
 
-NairaFlow follows **clean architecture** and **SOLID** principles with a clear separation
+GMNY follows **clean architecture** and **SOLID** principles with a clear separation
 between framework-agnostic domain logic (the `packages/*`) and delivery mechanisms
 (the `apps/*`). See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full write-up,
 including the money model, the transfer lifecycle, and the double-entry ledger.
 
 ```
-US sender ──USD──▶ NairaFlow API ──USDC (Base)──▶ Treasury ──NGN payout──▶ recipient bank
+US sender ──USD──▶ GMNY API ──USDC (Base)──▶ Treasury ──NGN payout──▶ recipient bank
 ```
 
 ## Tech stack
@@ -90,7 +90,7 @@ pnpm db:seed
 pnpm dev
 ```
 
-Seeded accounts: `admin@nairaflow.io` / `Admin!12345` and `demo@nairaflow.io` / `Demo!12345`.
+Seeded accounts: `admin@gmny.io` / `Admin!12345` and `demo@gmny.io` / `Demo!12345`.
 
 API docs (Swagger): http://localhost:4000/api/docs
 
@@ -131,13 +131,13 @@ this milestone; the remaining modules build on the same schema and patterns.
 
 ```bash
 pnpm test                              # all unit tests
-pnpm --filter @nairaflow/api test:e2e  # API end-to-end (needs test DB)
+pnpm --filter @gmny/api test:e2e  # API end-to-end (needs test DB)
 ```
 
 ## Authentication
 
 Production-grade auth lives in `apps/api` (module `modules/auth`) on top of the
-framework-agnostic `@nairaflow/auth` package.
+framework-agnostic `@gmny/auth` package.
 
 | Method | Endpoint | Purpose |
 | ------ | -------- | ------- |

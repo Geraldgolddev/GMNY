@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@nairaflow/ui';
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@gmny/ui';
 import { api, type AdminUserRow } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 
@@ -45,8 +45,8 @@ export default function AdminDashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-black">
-              <span className="text-emerald-700">Naira</span>
-              <span className="text-amber-500">Flow</span> Admin
+              <span className="text-emerald-700">GM</span>
+              <span className="text-amber-500">NY</span> Admin
             </h1>
             <p className="text-sm text-emerald-600">Signed in as {user?.email}</p>
           </div>

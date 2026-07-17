@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@nairaflow/ui';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@gmny/ui';
 import { api, ApiClientError } from '@/lib/api';
 
 type Status = 'verifying' | 'success' | 'error';
@@ -27,7 +27,7 @@ function VerifyEmailInner() {
       .verifyEmail(token)
       .then(() => {
         setStatus('success');
-        setMessage('Your email has been verified. You can now use all NairaFlow features.');
+        setMessage('Your email has been verified. You can now use all GMNY features.');
       })
       .catch((err) => {
         setStatus('error');

@@ -43,8 +43,8 @@ export class MailService implements OnModuleInit {
   async sendVerificationEmail(to: string, link: string): Promise<void> {
     await this.send(
       to,
-      'Verify your NairaFlow email',
-      `Welcome to NairaFlow! Confirm your email to activate your account:\n\n${link}\n\nThis link expires soon. If you didn't sign up, ignore this email.`,
+      'Verify your GMNY email',
+      `Welcome to GMNY! Confirm your email to activate your account:\n\n${link}\n\nThis link expires soon. If you didn't sign up, ignore this email.`,
       this.htmlTemplate('Verify your email', 'Confirm your email', link, 'Verify email'),
     );
   }
@@ -52,8 +52,8 @@ export class MailService implements OnModuleInit {
   async sendPasswordResetEmail(to: string, link: string): Promise<void> {
     await this.send(
       to,
-      'Reset your NairaFlow password',
-      `We received a request to reset your NairaFlow password:\n\n${link}\n\nIf you didn't request this, you can safely ignore this email.`,
+      'Reset your GMNY password',
+      `We received a request to reset your GMNY password:\n\n${link}\n\nIf you didn't request this, you can safely ignore this email.`,
       this.htmlTemplate('Reset your password', 'Reset your password', link, 'Reset password'),
     );
   }
@@ -71,7 +71,7 @@ export class MailService implements OnModuleInit {
   private htmlTemplate(title: string, heading: string, link: string, cta: string): string {
     return `<!doctype html><html><body style="font-family:sans-serif;background:#052e26;padding:24px">
       <div style="max-width:480px;margin:auto;background:#fff;border-radius:12px;padding:32px">
-        <h1 style="color:#047857">NairaFlow</h1>
+        <h1 style="color:#047857">GMNY</h1>
         <h2>${heading}</h2>
         <p>Click the button below to ${title.toLowerCase()}.</p>
         <p><a href="${link}" style="display:inline-block;background:#047857;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">${cta}</a></p>

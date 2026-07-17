@@ -3,8 +3,8 @@ import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 
 export const metadata: Metadata = {
-  title: 'NairaFlow Admin',
-  description: 'Operational console for NairaFlow.',
+  title: 'GMNY Admin',
+  description: 'Operational console for GMNY.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -1,8 +1,8 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { serializeBigInts } from '@nairaflow/database';
-import type { ApiSuccess } from '@nairaflow/shared';
+import { serializeBigInts } from '@gmny/database';
+import type { ApiSuccess } from '@gmny/shared';
 
 /**
  * Wraps every successful controller result in the standard {@link ApiSuccess}
