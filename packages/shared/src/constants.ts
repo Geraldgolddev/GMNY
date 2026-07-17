@@ -19,6 +19,18 @@ export const MIN_PASSWORD_LENGTH = 10;
 /** How long a locked exchange-rate quote remains valid, in seconds. */
 export const QUOTE_TTL_SECONDS = 60;
 
+/**
+ * Transfer fee policy. The fee is charged in the source currency (USD) as a
+ * percentage (basis points) of the send amount plus a flat component.
+ *   150 bps = 1.50%; flat = $0.30 (30 cents).
+ */
+export const FEE_BPS = 150;
+export const FLAT_FEE_MINOR = 30n; // 30 USD cents
+
+/** Minimum and maximum send amount per transfer, in USD cents. */
+export const MIN_TRANSFER_MINOR = 100n; // $1.00
+export const MAX_TRANSFER_MINOR = 5_000_00n; // $5,000.00
+
 /** Queue names for BullMQ workers. */
 export const QUEUES = {
   TRANSFERS: 'transfers',
