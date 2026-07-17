@@ -55,6 +55,10 @@ sudo -u postgres createdb -O nairaflow nairaflow_test 2>/dev/null || true
   edits hot-reload in web/admin).
 - Run `pnpm db:generate` after installing/altering the schema so the Prisma client exists
   (the root `pnpm build` and the update script already do this).
+- **Do not run the production `pnpm build` (or `next build`) while a `next dev` server is
+  running** — both write to the same `apps/*/.next` directory, which corrupts the dev
+  server and causes `MODULE_NOT_FOUND` / HTTP 500s. If this happens, stop the dev server,
+  delete that app's `.next`, and restart `pnpm dev`.
 
 ### Tests
 - Unit: `pnpm test` (Turbo, all packages).
