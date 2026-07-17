@@ -6,17 +6,18 @@
  * Safe to run multiple times (uses upserts).
  */
 import { PrismaClient, UserRole, UserStatus, KycStatus, WalletType, BlockchainNetwork, Currency } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+import { hash } from '@node-rs/argon2';
 
 const prisma = new PrismaClient();
 
-async function main(): Promise<void> {
-  const saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS ?? 12);
+// Argon2id options (algorithm 2 === Argon2id).
+const ARGON2_OPTS = { algorithm: 2 as const, memoryCost: 19_456, timeCost: 2, parallelism: 1 };
 
-  const adminPassword = await bcrypt.hash('Admin!12345', saltRounds);
+async function main(): Promise<void> {
+  const adminPassword = await hash('Admin!12345', ARGON2_OPTS);
   const admin = await prisma.user.upsert({
     where: { email: 'admin@nairaflow.io' },
-    update: {},
+    update: { passwordHash: adminPassword, emailVerifiedAt: new Date(), status: UserStatus.ACTIVE },
     create: {
       email: 'admin@nairaflow.io',
       passwordHash: adminPassword,
@@ -25,13 +26,14 @@ async function main(): Promise<void> {
       role: UserRole.ADMIN,
       status: UserStatus.ACTIVE,
       kycStatus: KycStatus.APPROVED,
+      emailVerifiedAt: new Date(),
     },
   });
 
-  const userPassword = await bcrypt.hash('Demo!12345', saltRounds);
+  const userPassword = await hash('Demo!12345', ARGON2_OPTS);
   await prisma.user.upsert({
     where: { email: 'demo@nairaflow.io' },
-    update: {},
+    update: { passwordHash: userPassword, emailVerifiedAt: new Date(), status: UserStatus.ACTIVE },
     create: {
       email: 'demo@nairaflow.io',
       passwordHash: userPassword,
@@ -40,6 +42,7 @@ async function main(): Promise<void> {
       role: UserRole.USER,
       status: UserStatus.ACTIVE,
       kycStatus: KycStatus.APPROVED,
+      emailVerifiedAt: new Date(),
     },
   });
 

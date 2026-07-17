@@ -35,10 +35,9 @@
   },
   "devDependencies": {
     "@nairaflow/shared": "workspace:*",
+    "@node-rs/argon2": "^2.0.2",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.5",
-    "bcryptjs": "^2.4.3",
-    "@types/bcryptjs": "^2.4.6",
     "@typescript-eslint/eslint-plugin": "^8.19.1",
     "@typescript-eslint/parser": "^8.19.1",
     "eslint": "^8.57.1",

@@ -107,6 +107,11 @@ enum AuditAction {
   AUTH_LOGOUT
   AUTH_REFRESH
   AUTH_PASSWORD_CHANGE
+  AUTH_EMAIL_VERIFY
+  AUTH_EMAIL_VERIFICATION_SENT
+  AUTH_FORGOT_PASSWORD
+  AUTH_RESET_PASSWORD
+  AUTH_SESSION_REVOKE
   USER_UPDATE
   USER_ROLE_CHANGE
   WALLET_CREATE
@@ -116,33 +121,57 @@ enum AuditAction {
   ADMIN_ACTION
 }
 
+enum TokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
 // ── Identity & Access ──────────────────────────────────────────────────────
 
 model User {
-  id           String     @id @default(uuid()) @db.Uuid
-  email        String     @unique
-  passwordHash String
-  firstName    String
-  lastName     String
-  phone        String?
-  role         UserRole   @default(USER)
-  status       UserStatus @default(PENDING)
-  kycStatus    KycStatus  @default(NOT_STARTED)
-  lastLoginAt  DateTime?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id              String     @id @default(uuid()) @db.Uuid
+  email           String     @unique
+  passwordHash    String
+  firstName       String
+  lastName        String
+  phone           String?
+  role            UserRole   @default(USER)
+  status          UserStatus @default(PENDING)
+  kycStatus       KycStatus  @default(NOT_STARTED)
+  emailVerifiedAt DateTime?
+  lastLoginAt     DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 
-  refreshTokens RefreshToken[]
-  wallets       Wallet[]
-  recipients    Recipient[]
-  transfers     Transfer[]
-  notifications Notification[]
-  kycProfile    KycProfile?
-  auditLogs     AuditLog[]     @relation("AuditActor")
+  refreshTokens      RefreshToken[]
+  verificationTokens VerificationToken[]
+  wallets            Wallet[]
+  recipients         Recipient[]
+  transfers          Transfer[]
+  notifications      Notification[]
+  kycProfile         KycProfile?
+  auditLogs          AuditLog[]          @relation("AuditActor")
 
   @@index([status])
   @@index([role])
   @@map("users")
+}
+
+/// Single-use, hashed, expiring tokens for email verification & password reset.
+model VerificationToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  type      TokenType
+  tokenHash String    @unique
+  expiresAt DateTime
+  consumedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@index([expiresAt])
+  @@map("verification_tokens")
 }
 
 /// Persisted, hashed refresh tokens enable rotation + server-side revocation.
