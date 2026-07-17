@@ -70,6 +70,13 @@ sudo -u postgres createdb -O nairaflow nairaflow_test 2>/dev/null || true
     REDIS_URL="redis://127.0.0.1:6379" \
     JWT_ACCESS_SECRET="test-access-secret-000000000000" \
     JWT_REFRESH_SECRET="test-refresh-secret-11111111111" \
-    BCRYPT_SALT_ROUNDS=4 pnpm test:e2e
+    COOKIE_SECRET="test-cookie-secret-00000000000000" \
+    ARGON2_MEMORY_COST=8 ARGON2_TIME_COST=1 ARGON2_PARALLELISM=1 \
+    THROTTLE_LIMIT=1000 pnpm test:e2e
   ```
-- Passwords use **bcryptjs** (pure JS) — no native build toolchain is required.
+  Use low `ARGON2_*` costs in tests for speed, and a high `THROTTLE_LIMIT` so the
+  global limiter doesn't interfere (the strict per-route `@Throttle` still applies).
+- Passwords use **Argon2id** via `@node-rs/argon2` (prebuilt binaries — no native
+  build toolchain needed). The refresh token is delivered as an httpOnly cookie
+  (`nf_refresh`, path `/api/auth`); e2e must set the global prefix to `api` and use
+  `cookie-parser` so the cookie path matches (see `apps/api/test/auth.e2e-spec.ts`).
