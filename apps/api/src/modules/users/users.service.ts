@@ -17,6 +17,7 @@ const PUBLIC_USER_SELECT = {
   role: true,
   status: true,
   kycStatus: true,
+  emailVerifiedAt: true,
   lastLoginAt: true,
   createdAt: true,
 } as const;
@@ -30,6 +31,7 @@ export type PublicUser = {
   role: string;
   status: string;
   kycStatus: string;
+  emailVerifiedAt: Date | null;
   lastLoginAt: Date | null;
   createdAt: Date;
 };

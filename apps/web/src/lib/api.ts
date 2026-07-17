@@ -9,27 +9,48 @@ export interface AuthUser {
   lastName: string;
   role: string;
   status: string;
+  emailVerified: boolean;
 }
 
 export interface AuthTokens {
   accessToken: string;
-  refreshToken: string;
   expiresIn: string;
 }
 
 export interface AuthResult {
   user: AuthUser;
   tokens: AuthTokens;
+  devVerificationUrl?: string;
 }
 
-export interface UserProfile extends AuthUser {
+export interface UserProfile {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
   phone: string | null;
+  role: string;
+  status: string;
   kycStatus: string;
+  emailVerifiedAt: string | null;
   lastLoginAt: string | null;
   createdAt: string;
 }
 
-/** Thrown for any non-2xx API response, carrying the stable error code. */
+export interface SessionInfo {
+  id: string;
+  ipAddress: string | null;
+  userAgent: string | null;
+  createdAt: string;
+  expiresAt: string;
+  current: boolean;
+}
+
+export interface MessageResult {
+  message: string;
+  devActionUrl?: string;
+}
+
 export class ApiClientError extends Error {
   constructor(
     message: string,
@@ -44,6 +65,8 @@ export class ApiClientError extends Error {
 async function request<T>(path: string, init: RequestInit = {}, token?: string): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
+    // Always include credentials so the httpOnly refresh cookie flows.
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -51,11 +74,12 @@ async function request<T>(path: string, init: RequestInit = {}, token?: string):
     },
   });
 
-  const body = (await res.json()) as ApiResponse<T>;
-  if (!body.success) {
-    throw new ApiClientError(body.error.message, body.error.code, res.status);
+  const body = (await res.json().catch(() => ({}))) as ApiResponse<T>;
+  if (!body || (body as ApiResponse<T>).success === false) {
+    const err = (body as { error?: { message: string; code: string } }).error;
+    throw new ApiClientError(err?.message ?? 'Request failed', err?.code ?? 'UNKNOWN', res.status);
   }
-  return body.data;
+  return (body as { data: T }).data;
 }
 
 export const api = {
@@ -66,16 +90,44 @@ export const api = {
     lastName: string;
     phone?: string;
   }): Promise<AuthResult> {
-    return request<AuthResult>('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(input),
-    });
+    return request<AuthResult>('/auth/register', { method: 'POST', body: JSON.stringify(input) });
   },
 
   login(input: { email: string; password: string }): Promise<AuthResult> {
-    return request<AuthResult>('/auth/login', {
+    return request<AuthResult>('/auth/login', { method: 'POST', body: JSON.stringify(input) });
+  },
+
+  /** Rotate the session using the httpOnly refresh cookie. */
+  refresh(): Promise<AuthResult> {
+    return request<AuthResult>('/auth/refresh', { method: 'POST', body: JSON.stringify({}) });
+  },
+
+  logout(token: string): Promise<void> {
+    return request<void>('/auth/logout', { method: 'POST', body: JSON.stringify({}) }, token);
+  },
+
+  verifyEmail(verificationToken: string): Promise<MessageResult> {
+    return request<MessageResult>('/auth/verify-email', {
       method: 'POST',
-      body: JSON.stringify(input),
+      body: JSON.stringify({ token: verificationToken }),
+    });
+  },
+
+  resendVerification(token: string): Promise<MessageResult> {
+    return request<MessageResult>('/auth/resend-verification', { method: 'POST', body: JSON.stringify({}) }, token);
+  },
+
+  forgotPassword(email: string): Promise<MessageResult> {
+    return request<MessageResult>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  resetPassword(resetToken: string, newPassword: string): Promise<MessageResult> {
+    return request<MessageResult>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token: resetToken, newPassword }),
     });
   },
 
@@ -83,10 +135,7 @@ export const api = {
     return request<UserProfile>('/users/me', { method: 'GET' }, token);
   },
 
-  logout(token: string, refreshToken: string): Promise<void> {
-    return request<void>('/auth/logout', {
-      method: 'POST',
-      body: JSON.stringify({ refreshToken }),
-    }, token);
+  sessions(token: string): Promise<SessionInfo[]> {
+    return request<SessionInfo[]>('/auth/sessions', { method: 'GET' }, token);
   },
 };
