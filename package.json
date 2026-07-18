@@ -13,6 +13,8 @@
     "dev:admin": "npm run dev -w @gmny/admin",
     "build:packages": "npm run build -w @gmny/shared && npm run build -w @gmny/auth && npm run build -w @gmny/blockchain && npm run db:generate && npm run build -w @gmny/database",
     "build": "npm run build:packages && npm run build -w @gmny/api && npm run build -w @gmny/web",
+    "vercel-build:web": "npm run build -w @gmny/shared && npm run build -w @gmny/web",
+    "vercel-build:admin": "npm run build -w @gmny/shared && npm run build -w @gmny/admin",
     "test": "npm run test -w @gmny/auth && npm run test -w @gmny/blockchain && npm run test -w @gmny/api",
     "db:generate": "npm run prisma:generate -w @gmny/database",
     "db:migrate": "npm run prisma:migrate -w @gmny/database",
