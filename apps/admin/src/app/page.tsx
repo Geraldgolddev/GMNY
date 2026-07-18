@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Button, Input, Label } from '@gmny/ui';
 import type { AuthResponse } from '@gmny/shared';
 import { Role } from '@gmny/shared';
-import { adminFetch } from '../lib/api';
+import { adminFetch, saveAdminAuth } from '../lib/api';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -32,8 +32,8 @@ export default function AdminLoginPage() {
         throw new Error('Admin role required');
       }
 
-      localStorage.setItem('gmny.admin.accessToken', auth.tokens.accessToken);
-      router.push('/users');
+      saveAdminAuth(auth);
+      router.push('/overview');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -43,22 +43,38 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-xl border border-white/10 bg-slate-900 p-8">
+      <div className="w-full max-w-md rounded-2xl border border-[var(--gmny-border)] bg-[var(--gmny-surface)] p-8 shadow-[0_20px_60px_rgba(29,78,216,0.18)]">
         <div className="mb-6 flex items-center gap-3">
-          <Image src="/brand/gmny-logo.png" alt="GMNY" width={40} height={40} />
+          <Image src="/brand/gmny-logo.png" alt="GMNY" width={44} height={44} />
           <div>
-            <h1 className="text-lg font-semibold">GMNY Admin</h1>
-            <p className="text-sm text-slate-400">Operations console</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[var(--gmny-blue-400)]">
+              GMNY
+            </p>
+            <h1 className="text-lg font-semibold text-white">Admin console</h1>
+            <p className="text-sm text-[var(--gmny-muted)]">Operations &amp; compliance</p>
           </div>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
             <Label htmlFor="email">Admin email</Label>
-            <Input id="email" name="email" type="email" required />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              required
+              autoComplete="username"
+              defaultValue="admin@gmny.com"
+            />
           </div>
           <div>
             <Label htmlFor="password">Password</Label>
-            <Input id="password" name="password" type="password" required />
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              required
+              autoComplete="current-password"
+            />
           </div>
           {error ? <p className="text-sm text-red-300">{error}</p> : null}
           <Button type="submit" className="w-full" disabled={loading}>

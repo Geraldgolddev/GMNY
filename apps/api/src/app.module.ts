@@ -1,37 +1,42 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
-import { validateEnv } from './config/env.validation';
+import { AuthGuard, RolesGuard } from './common/auth.decorator';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
-import { AuditModule } from './modules/audit/audit.module';
+import { AdminModule } from './modules/admin/admin.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { HealthModule } from './modules/health/health.module';
-import { UsersModule } from './modules/users/users.module';
-import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { RatesModule } from './modules/exchange-rates/rates.module';
+import { RecipientsModule } from './modules/recipients/recipients.module';
+import { BaseModule } from './modules/base/base.module';
+import { CircleModule } from './modules/circle/circle.module';
+import { HistoryModule } from './modules/history/history.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { TransfersModule } from './modules/transfers/transfers.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env', '../../.env'],
-      validate: validateEnv,
     }),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60_000,
-        limit: 100,
-      },
-    ]),
     PrismaModule,
-    AuditModule,
-    AuthModule,
-    UsersModule,
     HealthModule,
+    AuthModule,
+    DashboardModule,
+    RecipientsModule,
+    RatesModule,
+    NotificationsModule,
+    CircleModule,
+    BaseModule,
+    TransfersModule,
+    HistoryModule,
+    AdminModule,
   ],
-  providers: [
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
-    { provide: APP_GUARD, useClass: JwtAuthGuard },
-  ],
+  providers: [AuthGuard, RolesGuard],
 })
 export class AppModule {}
+
+
+
+

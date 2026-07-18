@@ -1,4 +1,4 @@
-import type { UsdcTransferRequest, UsdcTransferResult } from '../types.js';
+import type { UsdcTransferRequest, UsdcTransferResult } from '../types';
 
 /**
  * Port for USDC movement on Base via Circle.

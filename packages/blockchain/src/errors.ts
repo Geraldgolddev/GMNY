@@ -1,11 +1,12 @@
 export class BlockchainError extends Error {
-  constructor(
-    message: string,
-    readonly code: string,
-    readonly cause?: unknown,
-  ) {
+  readonly code: string;
+  readonly details?: unknown;
+
+  constructor(message: string, code: string, details?: unknown) {
     super(message);
     this.name = 'BlockchainError';
+    this.code = code;
+    this.details = details;
   }
 }
 

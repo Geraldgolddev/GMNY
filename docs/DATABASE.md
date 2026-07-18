@@ -9,12 +9,12 @@ PostgreSQL is the system of record. Prisma schema lives in `packages/database/pr
 | `users` | Identity, role (`USER`/`ADMIN`), KYC status flag |
 | `refresh_tokens` | Hashed refresh sessions for revoke/rotate |
 | `kyc_profiles` | Compliance profile + screening metadata |
-| `wallets` | Custodial USDC wallets (Circle provider id) |
+| `wallets` | Custodial USDC wallets (Circle provider id, Base / Base Sepolia) |
 | `bank_accounts` | Nigerian (and future) payout destinations |
 | `transfers` | End-to-end remittance lifecycle |
 | `transactions` | Ledger-style movement records |
 | `exchange_rates` | FX quotes with validity windows |
-| `notifications` | Outbound message queue state |
+| `notifications` | In-app / email notification inbox + delivery status |
 | `treasury_accounts` | Company liquidity balances |
 | `audit_logs` | Tamper-evident action history |
 

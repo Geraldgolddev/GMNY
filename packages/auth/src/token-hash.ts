@@ -11,8 +11,6 @@ export function hashToken(token: string): string {
 export function tokensMatch(plain: string, hashed: string): boolean {
   const a = Buffer.from(hashToken(plain), 'hex');
   const b = Buffer.from(hashed, 'hex');
-  if (a.length !== b.length) {
-    return false;
-  }
+  if (a.length !== b.length) return false;
   return timingSafeEqual(a, b);
 }

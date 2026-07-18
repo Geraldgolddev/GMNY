@@ -1,0 +1,3 @@
+export const CIRCLE_CLIENT = Symbol('CIRCLE_CLIENT');
+export const CIRCLE_WALLET_PORT = Symbol('CIRCLE_WALLET_PORT');
+export const CIRCLE_TRANSFER_PORT = Symbol('CIRCLE_TRANSFER_PORT');

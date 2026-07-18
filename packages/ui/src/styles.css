@@ -1,10 +1,14 @@
 :root {
-  --gmny-blue-400: #3b82f6;
-  --gmny-blue-500: #2563eb;
-  --gmny-blue-600: #1d4ed8;
-  --gmny-ink: #0f172a;
-  --gmny-muted: #64748b;
-  --gmny-border: #e2e8f0;
-  --gmny-surface: #f1f5f9;
-  --gmny-bg: #f8fafc;
+  /* Metallic sapphire palette aligned to the official blue GMNY mark */
+  --gmny-blue-300: #93c5fd;
+  --gmny-blue-400: #60a5fa;
+  --gmny-blue-500: #3b82f6;
+  --gmny-blue-600: #2563eb;
+  --gmny-blue-700: #1d4ed8;
+  --gmny-blue-900: #0b1b3a;
+  --gmny-ink: #e8eefc;
+  --gmny-muted: #94a3b8;
+  --gmny-border: rgba(147, 197, 253, 0.22);
+  --gmny-surface: rgba(15, 35, 70, 0.72);
+  --gmny-bg: #050a14;
 }

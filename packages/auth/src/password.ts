@@ -1,6 +1,6 @@
 import * as argon2 from 'argon2';
 
-const ARGON2_OPTIONS: argon2.Options = {
+const OPTIONS: argon2.Options = {
   type: argon2.argon2id,
   memoryCost: 19456,
   timeCost: 2,
@@ -8,16 +8,13 @@ const ARGON2_OPTIONS: argon2.Options = {
 };
 
 export async function hashPassword(plain: string): Promise<string> {
-  if (!plain || plain.length < 12) {
-    throw new Error('Password does not meet minimum length');
+  if (plain.length < 12) {
+    throw new Error('Password must be at least 12 characters');
   }
-  return argon2.hash(plain, ARGON2_OPTIONS);
+  return argon2.hash(plain, OPTIONS);
 }
 
-export async function verifyPassword(
-  hash: string,
-  plain: string,
-): Promise<boolean> {
+export async function verifyPassword(hash: string, plain: string): Promise<boolean> {
   try {
     return await argon2.verify(hash, plain);
   } catch {

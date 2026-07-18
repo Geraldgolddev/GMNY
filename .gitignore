@@ -30,6 +30,9 @@ Thumbs.db
 # prisma local
 *.db
 *.db-journal
+packages/database/prisma/dev.db
+packages/database/prisma/dev.db-journal
+
 
 # misc
 .turbo

@@ -1,3 +1,8 @@
-export * from './password';
-export * from './token-hash';
-export * from './jwt-claims';
+export { hashPassword, verifyPassword } from './password';
+export { generateRefreshToken, hashToken, tokensMatch } from './token-hash';
+export {
+  signAccessToken,
+  verifyAccessToken,
+  ttlToDate,
+  type AccessPayload,
+} from './jwt';

@@ -7,6 +7,5 @@
     "rootDir": "src",
     "composite": true
   },
-  "include": ["src/**/*"],
-  "references": [{ "path": "../shared" }]
+  "include": ["src/**/*"]
 }

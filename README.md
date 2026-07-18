@@ -1,73 +1,45 @@
 # GMNY
 
-Production-oriented USDC cross-border payments platform: **USD → USDC (Base) → NGN bank deposit**.
+USDC-powered cross-border payments: **USD → USDC (Base) → NGN bank deposit**.
 
-Product mission formerly scoped as NairaFlow; brand is **GMNY**.
+## Current milestone
 
-## Architecture
+**Feature 5 — Send Money** is complete. Next: Transaction History.  
+See [docs/FEATURE_05_SEND_MONEY.md](docs/FEATURE_05_SEND_MONEY.md) and [docs/ROADMAP.md](docs/ROADMAP.md).
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/DATABASE.md](docs/DATABASE.md).
 
-```
-apps/web      Customer Next.js app
-apps/admin   Admin Next.js console
-apps/api     NestJS API
-packages/*   shared, database, auth, blockchain, ui
-```
 
-## Prerequisites
 
-- Node.js 20+
-- Docker Desktop (PostgreSQL + Redis)
-- npm 10+
+
+## Stack
+
+- **Web:** Next.js + TypeScript + Tailwind (`apps/web`)
+- **API:** NestJS (`apps/api`)
+- **DB:** PostgreSQL + Prisma (`packages/database`)
+- **Auth libs:** Argon2id + JWT helpers (`packages/auth`)
+- **Infra:** Docker Compose (Postgres + Redis)
 
 ## Quick start
 
 ```bash
 cp .env.example .env
-docker compose up -d
+docker compose up -d          # or local PostgreSQL on :5432
 npm install
 npm run build:packages
 npm run db:migrate:deploy
 npm run db:seed
-npm run dev:api
-# separate terminals
-npm run dev:web
-npm run dev:admin
+npm run dev:api               # http://localhost:4000/docs
+npm run dev:web               # http://localhost:3000
 ```
 
-| Service | URL |
-|---------|-----|
-| Web | http://localhost:3000 |
-| Admin | http://localhost:3001 |
-| API | http://localhost:4000/api/v1 |
-| Swagger | http://localhost:4000/docs |
+Seeded admin (change immediately): `admin@gmny.com` / `ChangeMeAdmin1!`
 
-Default seeded admin: `admin@gmny.com` / `ChangeMeAdmin1!` (override via `SEED_ADMIN_*`).
+## Monorepo layout
 
-## Phase 1 deliverables
-
-- [x] Scalable npm workspaces monorepo
-- [x] Docker Compose (Postgres 16 + Redis 7)
-- [x] Environment validation
-- [x] Prisma schema + initial migration for core domains
-- [x] JWT access + hashed refresh tokens + RBAC (`USER` / `ADMIN`)
-- [x] Audit logging for auth events
-- [x] Web auth UI + admin console shell
-- [x] Unit tests for auth primitives and auth service
-- [x] OpenAPI documentation
-
-## Testing
-
-```bash
-npm run test -w @gmny/shared
-npm run test -w @gmny/auth
-npm run test -w @gmny/blockchain
-npm run test -w @gmny/api
 ```
-
-## Security notes
-
-- Never commit `.env`
-- Rotate `JWT_*_SECRET` and seed admin password before any shared environment
-- Circle credentials are unused until Phase 2 and fail closed via blockchain ports
+apps/web      Customer app
+apps/admin   Admin console (later features)
+apps/api     NestJS API
+packages/    shared, database, auth, blockchain, ui
+docs/        architecture + per-feature docs
+```

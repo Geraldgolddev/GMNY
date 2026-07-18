@@ -2,29 +2,31 @@
 @import "@gmny/ui/styles.css";
 
 :root {
-  --background: #070b14;
-  --foreground: #e8eefc;
-  --gmny-blue-400: #60a5fa;
-  --gmny-blue-500: #3b82f6;
-  --gmny-blue-600: #2563eb;
-  --gmny-ink: #e8eefc;
-  --gmny-muted: #94a3b8;
-  --gmny-border: rgba(148, 163, 184, 0.28);
-  --gmny-surface: rgba(15, 23, 42, 0.72);
-  --gmny-bg: #070b14;
+  --background: var(--gmny-bg);
+  --foreground: var(--gmny-ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-display);
+  --font-sans: var(--font-sans);
+  --color-gmny-blue: var(--gmny-blue-500);
 }
 
 body {
-  background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(37, 99, 235, 0.35), transparent 60%),
-    radial-gradient(900px 500px at 10% 20%, rgba(14, 165, 233, 0.18), transparent 55%),
-    var(--background);
-  color: var(--foreground);
   min-height: 100vh;
+  color: var(--foreground);
+  background:
+    radial-gradient(1100px 560px at 78% -8%, rgba(37, 99, 235, 0.42), transparent 58%),
+    radial-gradient(900px 480px at 8% 18%, rgba(29, 78, 216, 0.28), transparent 52%),
+    radial-gradient(700px 360px at 50% 110%, rgba(96, 165, 250, 0.12), transparent 55%),
+    linear-gradient(180deg, #050a14 0%, #071226 45%, #050a14 100%);
+}
+
+a {
+  color: var(--gmny-blue-400);
+}
+
+a:hover {
+  color: var(--gmny-blue-300);
 }

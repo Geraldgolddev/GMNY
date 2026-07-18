@@ -1,32 +1,18 @@
 import type { Metadata } from 'next';
-import { DM_Sans, Instrument_Serif } from 'next/font/google';
+import { DM_Sans } from 'next/font/google';
 import './globals.css';
 
-const sans = DM_Sans({
-  subsets: ['latin'],
-  variable: '--font-display',
-});
-
-const serif = Instrument_Serif({
-  subsets: ['latin'],
-  weight: '400',
-  variable: '--font-serif',
-});
+const sans = DM_Sans({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: 'GMNY — Cross-border USD to Naira',
-  description:
-    'Send USD from the United States. Settle in USDC on Base. Deliver Naira to Nigerian bank accounts.',
+  title: 'GMNY — USD ↔ NGN',
+  description: 'Simple USD to Naira and Naira to USD transfers',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${serif.variable} h-full`}>
-      <body className="min-h-full font-sans antialiased">{children}</body>
+    <html lang="en" className={sans.variable}>
+      <body className="min-h-screen font-sans antialiased">{children}</body>
     </html>
   );
 }

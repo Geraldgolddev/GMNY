@@ -2,40 +2,27 @@
   "name": "gmny",
   "version": "0.1.0",
   "private": true,
-  "description": "GMNY — USDC-powered U.S.→Nigeria cross-border payments platform",
+  "description": "GMNY — USDC-powered U.S. to Nigeria cross-border payments",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
     "dev:web": "npm run dev -w @gmny/web",
-    "dev:admin": "npm run dev -w @gmny/admin",
     "dev:api": "npm run start:dev -w @gmny/api",
-    "build": "npm run build --workspaces --if-present",
+    "dev:admin": "npm run dev -w @gmny/admin",
     "build:packages": "npm run build -w @gmny/shared && npm run build -w @gmny/auth && npm run build -w @gmny/blockchain && npm run db:generate && npm run build -w @gmny/database",
-    "lint": "eslint . --max-warnings=0",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "build": "npm run build:packages && npm run build -w @gmny/api && npm run build -w @gmny/web",
+    "test": "npm run test -w @gmny/auth && npm run test -w @gmny/blockchain && npm run test -w @gmny/api",
     "db:generate": "npm run prisma:generate -w @gmny/database",
     "db:migrate": "npm run prisma:migrate -w @gmny/database",
     "db:migrate:deploy": "npm run prisma:migrate:deploy -w @gmny/database",
+    "db:seed": "npm run seed -w @gmny/database",
     "db:studio": "npm run prisma:studio -w @gmny/database",
     "docker:up": "docker compose up -d",
-    "docker:down": "docker compose down",
-    "docker:logs": "docker compose logs -f"
+    "docker:down": "docker compose down"
   },
   "engines": {
     "node": ">=20"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.22.0",
-    "eslint": "^9.22.0",
-    "eslint-config-prettier": "^10.1.1",
-    "globals": "^16.0.0",
-    "prettier": "^3.5.3",
-    "typescript": "^5.8.2",
-    "typescript-eslint": "^8.26.1"
   }
 }
