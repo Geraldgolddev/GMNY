@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3000",
-    "build": "next build",
+    "build": "cd ../.. && npm run build -w @gmny/shared && cd apps/web && next build",
     "start": "next start --port 3000",
     "lint": "eslint .",
     "test": "node --import tsx --test src/**/*.test.ts"
