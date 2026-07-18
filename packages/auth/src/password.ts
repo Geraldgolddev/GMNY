@@ -1,0 +1,26 @@
+import * as argon2 from 'argon2';
+
+const ARGON2_OPTIONS: argon2.Options = {
+  type: argon2.argon2id,
+  memoryCost: 19456,
+  timeCost: 2,
+  parallelism: 1,
+};
+
+export async function hashPassword(plain: string): Promise<string> {
+  if (!plain || plain.length < 12) {
+    throw new Error('Password does not meet minimum length');
+  }
+  return argon2.hash(plain, ARGON2_OPTIONS);
+}
+
+export async function verifyPassword(
+  hash: string,
+  plain: string,
+): Promise<boolean> {
+  try {
+    return await argon2.verify(hash, plain);
+  } catch {
+    return false;
+  }
+}

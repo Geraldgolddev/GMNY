@@ -1,0 +1,319 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum KycStatus {
+  NOT_STARTED
+  PENDING
+  APPROVED
+  REJECTED
+  NEEDS_REVIEW
+}
+
+enum WalletProvider {
+  CIRCLE
+  INTERNAL
+}
+
+enum WalletStatus {
+  ACTIVE
+  FROZEN
+  CLOSED
+}
+
+enum TransferStatus {
+  DRAFT
+  AWAITING_PAYMENT
+  FUNDED
+  CONVERTING
+  ON_CHAIN
+  PAYOUT_PENDING
+  PAYOUT_SENT
+  COMPLETED
+  FAILED
+  CANCELLED
+  COMPLIANCE_HOLD
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  TRANSFER
+  FX_CONVERSION
+  FEE
+  REFUND
+  ADJUSTMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  SETTLED
+  FAILED
+  REVERSED
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+  IN_APP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+enum AuditAction {
+  USER_REGISTERED
+  USER_LOGIN
+  USER_LOGOUT
+  TOKEN_REFRESHED
+  USER_UPDATED
+  ROLE_CHANGED
+  WALLET_CREATED
+  TRANSFER_CREATED
+  TRANSFER_STATUS_CHANGED
+  COMPLIANCE_FLAGGED
+  ADMIN_ACTION
+  SYSTEM
+}
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  email        String    @unique @db.VarChar(320)
+  passwordHash String    @map("password_hash")
+  firstName    String    @map("first_name") @db.VarChar(100)
+  lastName     String    @map("last_name") @db.VarChar(100)
+  role         Role      @default(USER)
+  kycStatus    KycStatus @default(NOT_STARTED) @map("kyc_status")
+  isActive     Boolean   @default(true) @map("is_active")
+  lastLoginAt  DateTime? @map("last_login_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  refreshTokens  RefreshToken[]
+  wallets        Wallet[]
+  transfers      Transfer[]      @relation("SenderTransfers")
+  transactions   Transaction[]
+  notifications  Notification[]
+  auditLogs      AuditLog[]      @relation("ActorAuditLogs")
+  kycProfile     KycProfile?
+  bankAccounts   BankAccount[]
+
+  @@index([role])
+  @@index([kycStatus])
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  userAgent String?   @map("user_agent") @db.VarChar(512)
+  ipAddress String?   @map("ip_address") @db.VarChar(64)
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+model KycProfile {
+  id                   String    @id @default(uuid()) @db.Uuid
+  userId               String    @unique @map("user_id") @db.Uuid
+  status               KycStatus @default(NOT_STARTED)
+  provider             String?   @db.VarChar(64)
+  providerReference    String?   @map("provider_reference") @db.VarChar(255)
+  documentCountry      String?   @map("document_country") @db.Char(2)
+  sanctionsScreenedAt  DateTime? @map("sanctions_screened_at")
+  reviewedByAdminId    String?   @map("reviewed_by_admin_id") @db.Uuid
+  reviewedAt           DateTime? @map("reviewed_at")
+  rejectionReason      String?   @map("rejection_reason") @db.VarChar(1000)
+  metadata             Json?
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("kyc_profiles")
+}
+
+model Wallet {
+  id              String         @id @default(uuid()) @db.Uuid
+  userId          String         @map("user_id") @db.Uuid
+  provider        WalletProvider @default(CIRCLE)
+  providerWalletId String?       @unique @map("provider_wallet_id") @db.VarChar(255)
+  address         String?        @db.VarChar(128)
+  chain           String         @default("BASE") @db.VarChar(32)
+  currency        String         @default("USDC") @db.VarChar(16)
+  status          WalletStatus   @default(ACTIVE)
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@unique([userId, chain, currency])
+  @@index([provider])
+  @@map("wallets")
+}
+
+model BankAccount {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  country       String   @db.Char(2)
+  currency      String   @db.VarChar(16)
+  bankName      String   @map("bank_name") @db.VarChar(255)
+  accountName   String   @map("account_name") @db.VarChar(255)
+  accountNumber String   @map("account_number") @db.VarChar(64)
+  bankCode      String?  @map("bank_code") @db.VarChar(32)
+  isVerified    Boolean  @default(false) @map("is_verified")
+  isDefault     Boolean  @default(false) @map("is_default")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transfers Transfer[]
+
+  @@index([userId])
+  @@map("bank_accounts")
+}
+
+model Transfer {
+  id                String         @id @default(uuid()) @db.Uuid
+  senderId          String         @map("sender_id") @db.Uuid
+  recipientBankId   String?        @map("recipient_bank_id") @db.Uuid
+  status            TransferStatus @default(DRAFT)
+  sourceCurrency    String         @map("source_currency") @db.VarChar(16)
+  sourceAmount      Decimal        @map("source_amount") @db.Decimal(18, 2)
+  destinationCurrency String       @map("destination_currency") @db.VarChar(16)
+  destinationAmount Decimal?       @map("destination_amount") @db.Decimal(18, 2)
+  fxRate            Decimal?       @map("fx_rate") @db.Decimal(18, 8)
+  feeAmount         Decimal        @default(0) @map("fee_amount") @db.Decimal(18, 2)
+  feeCurrency       String         @default("USD") @map("fee_currency") @db.VarChar(16)
+  idempotencyKey    String         @unique @map("idempotency_key") @db.VarChar(128)
+  circleTransferId  String?        @map("circle_transfer_id") @db.VarChar(255)
+  onChainTxHash     String?        @map("on_chain_tx_hash") @db.VarChar(128)
+  failureReason     String?        @map("failure_reason") @db.VarChar(1000)
+  completedAt       DateTime?      @map("completed_at")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  sender         User          @relation("SenderTransfers", fields: [senderId], references: [id])
+  recipientBank  BankAccount?  @relation(fields: [recipientBankId], references: [id])
+  transactions   Transaction[]
+
+  @@index([senderId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("transfers")
+}
+
+model Transaction {
+  id          String            @id @default(uuid()) @db.Uuid
+  userId      String            @map("user_id") @db.Uuid
+  walletId    String?           @map("wallet_id") @db.Uuid
+  transferId  String?           @map("transfer_id") @db.Uuid
+  type        TransactionType
+  status      TransactionStatus @default(PENDING)
+  currency    String            @db.VarChar(16)
+  amount      Decimal           @db.Decimal(18, 8)
+  balanceAfter Decimal?         @map("balance_after") @db.Decimal(18, 8)
+  description String?           @db.VarChar(500)
+  externalRef String?           @map("external_ref") @db.VarChar(255)
+  metadata    Json?
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id])
+  wallet   Wallet?   @relation(fields: [walletId], references: [id])
+  transfer Transfer? @relation(fields: [transferId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([transferId])
+  @@index([type, status])
+  @@map("transactions")
+}
+
+model ExchangeRate {
+  id             String   @id @default(uuid()) @db.Uuid
+  baseCurrency   String   @map("base_currency") @db.VarChar(16)
+  quoteCurrency  String   @map("quote_currency") @db.VarChar(16)
+  rate           Decimal  @db.Decimal(18, 8)
+  source         String   @db.VarChar(64)
+  validFrom      DateTime @map("valid_from")
+  validTo        DateTime? @map("valid_to")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@unique([baseCurrency, quoteCurrency, validFrom])
+  @@index([baseCurrency, quoteCurrency])
+  @@map("exchange_rates")
+}
+
+model Notification {
+  id        String              @id @default(uuid()) @db.Uuid
+  userId    String              @map("user_id") @db.Uuid
+  channel   NotificationChannel
+  status    NotificationStatus  @default(PENDING)
+  subject   String              @db.VarChar(255)
+  body      String
+  payload   Json?
+  sentAt    DateTime?           @map("sent_at")
+  createdAt DateTime            @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@map("notifications")
+}
+
+model TreasuryAccount {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String   @db.VarChar(128)
+  currency     String   @db.VarChar(16)
+  provider     String   @db.VarChar(64)
+  providerRef  String?  @map("provider_ref") @db.VarChar(255)
+  balance      Decimal  @default(0) @db.Decimal(18, 8)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@unique([name, currency])
+  @@map("treasury_accounts")
+}
+
+model AuditLog {
+  id         String      @id @default(uuid()) @db.Uuid
+  actorId    String?     @map("actor_id") @db.Uuid
+  action     AuditAction
+  entityType String      @map("entity_type") @db.VarChar(64)
+  entityId   String?     @map("entity_id") @db.VarChar(64)
+  ipAddress  String?     @map("ip_address") @db.VarChar(64)
+  userAgent  String?     @map("user_agent") @db.VarChar(512)
+  metadata   Json?
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  actor User? @relation("ActorAuditLogs", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId])
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

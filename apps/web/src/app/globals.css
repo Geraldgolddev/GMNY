@@ -1,0 +1,30 @@
+@import "tailwindcss";
+@import "@gmny/ui/styles.css";
+
+:root {
+  --background: #070b14;
+  --foreground: #e8eefc;
+  --gmny-blue-400: #60a5fa;
+  --gmny-blue-500: #3b82f6;
+  --gmny-blue-600: #2563eb;
+  --gmny-ink: #e8eefc;
+  --gmny-muted: #94a3b8;
+  --gmny-border: rgba(148, 163, 184, 0.28);
+  --gmny-surface: rgba(15, 23, 42, 0.72);
+  --gmny-bg: #070b14;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-display);
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(37, 99, 235, 0.35), transparent 60%),
+    radial-gradient(900px 500px at 10% 20%, rgba(14, 165, 233, 0.18), transparent 55%),
+    var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+}

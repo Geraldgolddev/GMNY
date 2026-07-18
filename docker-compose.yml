@@ -1,0 +1,47 @@
+name: gmny
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: gmny-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-gmny}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gmny_dev_password_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-gmny}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - gmny_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-gmny} -d ${POSTGRES_DB:-gmny}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - gmny_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: gmny-redis
+    restart: unless-stopped
+    command: ['redis-server', '--appendonly', 'yes', '--maxmemory-policy', 'noeviction']
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - gmny_redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - gmny_net
+
+networks:
+  gmny_net:
+    driver: bridge
+
+volumes:
+  gmny_pg_data:
+  gmny_redis_data:

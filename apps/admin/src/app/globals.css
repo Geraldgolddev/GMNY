@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@import "@gmny/ui/styles.css";
+
+:root {
+  --background: #0b1220;
+  --foreground: #e2e8f0;
+  --gmny-blue-400: #60a5fa;
+  --gmny-blue-500: #3b82f6;
+  --gmny-blue-600: #1d4ed8;
+  --gmny-ink: #e2e8f0;
+  --gmny-muted: #94a3b8;
+  --gmny-border: rgba(148, 163, 184, 0.25);
+  --gmny-surface: #111827;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+}
