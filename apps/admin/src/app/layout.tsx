@@ -4,6 +4,9 @@ import './globals.css';
 
 const sans = DM_Sans({ subsets: ['latin'], variable: '--font-sans' });
 
+// Admin pages are auth-gated client apps; skip static prerender.
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'GMNY Admin',
   description: 'GMNY operations and compliance console',

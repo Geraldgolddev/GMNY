@@ -4,6 +4,9 @@ import './globals.css';
 
 const sans = DM_Sans({ subsets: ['latin'], variable: '--font-sans' });
 
+// Auth-gated client pages; skip static prerender (avoids dual-React useContext failures).
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'GMNY — USD ↔ NGN',
   description: 'Simple USD to Naira and Naira to USD transfers',

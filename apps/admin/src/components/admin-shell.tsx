@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Button } from '@gmny/ui';
 import { clearAdminAuth, getAdminUser } from '../lib/api';
 
@@ -23,7 +23,11 @@ export function AdminShell({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const user = getAdminUser();
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    setUserEmail(getAdminUser()?.email ?? null);
+  }, []);
 
   function logout() {
     clearAdminAuth();
@@ -46,8 +50,8 @@ export function AdminShell({
               GMNY Admin
             </p>
             <h1 className="text-xl font-semibold text-white">{title}</h1>
-            {user ? (
-              <p className="text-xs text-[var(--gmny-muted)]">{user.email}</p>
+            {userEmail ? (
+              <p className="text-xs text-[var(--gmny-muted)]">{userEmail}</p>
             ) : null}
           </div>
         </div>

@@ -1,9 +1,12 @@
 import type { NextConfig } from 'next';
+import path from 'node:path';
+
+const monorepoRoot = path.join(__dirname, '../..');
 
 const nextConfig: NextConfig = {
   transpilePackages: ['@gmny/ui', '@gmny/shared'],
+  outputFileTracingRoot: monorepoRoot,
   eslint: {
-    // Keep Vercel builds green if root monorepo ESLint deps are incomplete.
     ignoreDuringBuilds: true,
   },
 };

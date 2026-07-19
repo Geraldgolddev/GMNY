@@ -7,6 +7,14 @@
     "apps/*",
     "packages/*"
   ],
+  "dependencies": {
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "overrides": {
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
   "scripts": {
     "dev:web": "npm run dev -w @gmny/web",
     "dev:api": "npm run start:dev -w @gmny/api",
