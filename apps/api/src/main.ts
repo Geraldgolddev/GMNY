@@ -44,10 +44,11 @@ async function bootstrap() {
 
   SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, docs));
 
-  const port = Number(process.env.API_PORT ?? 4000);
-  await app.listen(port);
-  logger.log(`GMNY API http://localhost:${port}/api/v1`);
-  logger.log(`Swagger   http://localhost:${port}/docs`);
+  // Railway/Render set PORT; local/dev use API_PORT. Bind 0.0.0.0 for containers.
+  const port = Number(process.env.PORT ?? process.env.API_PORT ?? 4000);
+  await app.listen(port, '0.0.0.0');
+  logger.log(`GMNY API http://0.0.0.0:${port}/api/v1`);
+  logger.log(`Swagger   http://0.0.0.0:${port}/docs`);
 }
 
 void bootstrap();
